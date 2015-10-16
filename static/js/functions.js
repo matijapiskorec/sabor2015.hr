@@ -44,6 +44,7 @@ function init_controls() {
     console.log('Odabrali ste izbornu jedinicu ' + current_voting_region);
   });
   $('#voting-region li a').click(function (e) {
+    event.preventDefault();
     $('#default-vr-dropdown').text($(this).text());
     $('#default-vr-dropdown').val($(this).text());
   });
