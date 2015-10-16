@@ -55,11 +55,11 @@ function init_controls() {
   $('#question-vote button').hover(function () {
     if (current_vote != this.attributes.party.value) {
       $(this).removeClass('btn-default');
-      $(this).addClass('btn-success');
+      $(this).addClass('btn-info');
     }
   }, function () {
     if (current_vote != this.attributes.party.value) {
-      $(this).removeClass('btn-success');
+      $(this).removeClass('btn-info');
       $(this).addClass('btn-default');
     }
   });
@@ -84,12 +84,12 @@ function init_controls() {
 
 function change_btn_vote_style(vote_value) {
   
-  $('#question-vote button').removeClass('btn-success');
+  $('#question-vote button').removeClass('btn-info');
   $('#question-vote button').addClass('btn-default');
   
   if (vote_value != -1) {
     $('#question-vote button[party='+vote_value+']').removeClass('btn-default');
-    $('#question-vote button[party='+vote_value+']').addClass('btn-success');
+    $('#question-vote button[party='+vote_value+']').addClass('btn-info');
   }
   
 }
@@ -202,7 +202,10 @@ function drawStatisticsOfFriends(data) {
       .attr("height", y.rangeBand())
       .attr("fill", "steelblue")
       .transition()
-      .duration(1500);
+      .duration(1500)
+      .attrTween("width", function (d) {
+        return d3.interpolate(0, x(d.votes));
+      });
   
   // var state = svg.selectAll(".state")
   //     .data(data_postoci)
