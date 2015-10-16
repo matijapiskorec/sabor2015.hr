@@ -1,12 +1,20 @@
 
 var friends_data = [
-  {'party':'HDZ', 'votes': 0.5},
-  {'party':'SDP', 'votes': 0.15},
-  {'party':'HNS', 'votes': 0.2},
-  {'party':'HSS', 'votes': 0.1},
-  {'party':'Živi zid', 'votes': 0.1},
-  {'party':'Stranka Milana Bandića', 'votes': 0.1},
-  {'party':'ostali', 'votes': 0.05}
+  {'party':'HDZ', 'votes': 0.32},
+  {'party':'SDP', 'votes': 0.16},
+  {'party':'Orah', 'votes': 0.22},
+  {'party':'Živi zid', 'votes': 0.11},
+  {'party':'HSS', 'votes': 0.11},
+  {'party':'HNS', 'votes': 0.16},
+  {'party':'HDSSB', 'votes': 0.05},
+  {'party':'Most nezavisnih lista', 'votes': 0.01},
+  {'party':'Stranka Milana Bandića', 'votes': 0.08},
+  {'party':'Hrvatski laburisti', 'votes': 0.14},
+  {'party':'IDS', 'votes': 0.12},
+  {'party':'HSP AS', 'votes': 0.01},
+  {'party':'HSU', 'votes': 0.01},
+  {'party':'HSP', 'votes': 0.01},
+  {'party':'ostali', 'votes': 0.16}
 ];
 
 $(document).ready(function () {
@@ -132,36 +140,31 @@ function user_vote(d) {
 
 function drawStatisticsOfFriends(data) {
 
-  // var data = jQuery.parseJSON(raw_data);
-  //var svg = d3.select("#age_hchart");
-  //$(svg[0]).empty();
- 
-  // var ukupno_za = data.reduce(function(pv, cv) { return {"ZA":pv.ZA + cv.ZA}; }).ZA;
-  // var ukupno_protiv = data.reduce(function(pv, cv) { return {"PROTIV":pv.PROTIV + cv.PROTIV}; }).PROTIV;
-  // var ukupno_glasova = ukupno_za + ukupno_protiv;
-  // var data_postoci = data.map(function(d){return {"godine":d.godine, "ZA":d.ZA/ukupno_glasova, "PROTIV":d.PROTIV/ukupno_glasova};});
-  
-  var margin = { top: 20, right: 20, bottom: 50, left: 40 },
+  var margin = { top: 100, right: 20, bottom: 50, left: 150 },
   width = 700 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
   
-  var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
-  // var x1 = d3.scale.ordinal();
+  // // Vertical bars
+  // var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+  // var y = d3.scale.linear().range([height, 0]);
   
-  var y = d3.scale.linear().range([height, 0]);
-  
+  // Horizontal bars
+  var x = d3.scale.linear().range([width, 0]);
+  var y = d3.scale.ordinal().rangeRoundBands([0, height], .1);
+
   // TODO: Find better way to assign colors to parties!
   var color = d3.scale.ordinal()
     .range([d3.rgb(165,0,38), d3.rgb(244,109,67), d3.rgb(254,224,144), d3.rgb(116,173,209), d3.rgb(49,54,149)]);
   
   var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom");
+    .orient("top");
+    // .orient("bottom"); // vertical bars
 
   var yAxis = d3.svg.axis()
     .scale(y)
-    .orient("left")
-    .ticks(15, "%");
+    .ticks(15, "%")
+    .orient("left"); // vertical bars
   
   var svg = d3.select("#results").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -169,50 +172,68 @@ function drawStatisticsOfFriends(data) {
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   
-  // var seriesNames = d3.keys(data_postoci[0]).filter(function (key) { return (key !== "godine"); });
-  // data_postoci.forEach(function (d) {
-  //     d.glasovi = seriesNames.map(function (name) { return { name: name, value: +d[name] }; });
-  // });
+  // // Vertical bars
+  // x.domain(data.map(function(d){return d.party;}));
+  // y.domain([0,1.1*d3.max(friends_data.map(function(d){return d.votes;}))]);
 
-  // x0.domain(data_postoci.map(function (d) { return d.godine; }));
-  // x.domain(d3.keys(data)).rangeRoundBands([0, x.rangeBand()]);
-  // y.domain([0,1.1*d3.max(d3.values(data))]);
-  x.domain(data.map(function(d){return d.party;}));
-  y.domain([0,1.1*d3.max(friends_data.map(function(d){return d.votes;}))]);
+  // Horizontal bars
+  // x.domain([0,1.1*d3.max(friends_data.map(function(d){return d.votes;}))]);
+  x.domain([1.1*d3.max(friends_data.map(function(d){return d.votes;})),0]);
+  y.domain(data.map(function(d){return d.party;}));
 
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-        // .append("text")
-        // .attr("y", 20)
-        // .attr("x", width/2)
-        // .attr("dy", "20px")
-        // .style("text-anchor", "end")
-        // .text("godine");
+  // // Vertical bars
+  // svg.append("g")
+  //     .attr("class", "x axis")
+  //     .attr("transform", "translate(0," + height + ")")
+  //     .call(xAxis);
+  // svg.append("g")
+  //     .attr("class", "y axis")
+  //     .attr("transform", "translate(-15,0)") // So that we aviod clash with axis label.
+  //     .call(yAxis)
+  // .append("text")
+  //     .attr("transform", "rotate(-90)")
+  //     .attr("y", 6)
+  //     .attr("dy", ".71em")
+  //     .style("text-anchor", "end")
+  //     .text("postotak glasova");
   
+  // Horizontal bars
   svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-  .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
+      .attr("class", "x axis") // .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+  .append("text") // .attr("transform", "rotate(-90)")
+      .attr("x", width/2)
+      .attr("dy", "-30px")
+      .style("text-anchor", "center")
       .text("postotak glasova");
-  
+  svg.append("g")
+      .attr("class", "y axis") // .attr("transform", "translate(-15,0)") // So that we aviod clash with axis label.
+      .call(yAxis);
+
   // d3.selectAll(".axis text").style("font-size","15px");
 
+  // // Vertical bars
+  // svg.selectAll(".bar")
+  //     .data(data)
+  //   .enter().append("rect")
+  //     .attr("class", "bar")
+  //     .attr("x", function(d) { return x(d.party); })
+  //     .attr("width", x.rangeBand())
+  //     .attr("y", function(d) { return y(d.votes); })
+  //     .attr("height", function(d) { return height - y(d.votes); })
+  //     .attr("fill", "steelblue");
+  //     // .attr("fill", function(d) {return color(d.party);});
+
+  // Horizontal bars
   svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.party); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.votes); })
-      .attr("height", function(d) { return height - y(d.votes); })
+      .attr("x", 0) //.attr("x", function(d) { return width - x(d.votes); })
+      .attr("width", function(d) { return x(d.votes); })
+      .attr("y", function(d) { return y(d.party); })
+      .attr("height", y.rangeBand())
       .attr("fill", "steelblue");
-      // .attr("fill", function(d) {return color(d.party);});
   
   // var state = svg.selectAll(".state")
   //     .data(data_postoci)
