@@ -1,11 +1,13 @@
 
-var friends_data = {
-  'HDZ': 0.5,
-  'SDP': 0.15,
-  'HNS': 0.2,
-  'HSS': 0.1,
-  'ostali': 0.05
-};
+var friends_data = [
+  {'party':'HDZ', 'votes': 0.5},
+  {'party':'SDP', 'votes': 0.15},
+  {'party':'HNS', 'votes': 0.2},
+  {'party':'HSS', 'votes': 0.1},
+  {'party':'Živi zid', 'votes': 0.1},
+  {'party':'Stranka Milana Bandića', 'votes': 0.1},
+  {'party':'ostali', 'votes': 0.05}
+];
 
 $(document).ready(function () {
 
@@ -134,16 +136,16 @@ function drawStatisticsOfFriends(data) {
   //var svg = d3.select("#age_hchart");
   //$(svg[0]).empty();
  
-  var ukupno_za = data.reduce(function(pv, cv) { return {"ZA":pv.ZA + cv.ZA}; }).ZA;
-  var ukupno_protiv = data.reduce(function(pv, cv) { return {"PROTIV":pv.PROTIV + cv.PROTIV}; }).PROTIV;
-  var ukupno_glasova = ukupno_za + ukupno_protiv;
-  var data_postoci = data.map(function(d){return {"godine":d.godine, "ZA":d.ZA/ukupno_glasova, "PROTIV":d.PROTIV/ukupno_glasova};});
+  // var ukupno_za = data.reduce(function(pv, cv) { return {"ZA":pv.ZA + cv.ZA}; }).ZA;
+  // var ukupno_protiv = data.reduce(function(pv, cv) { return {"PROTIV":pv.PROTIV + cv.PROTIV}; }).PROTIV;
+  // var ukupno_glasova = ukupno_za + ukupno_protiv;
+  // var data_postoci = data.map(function(d){return {"godine":d.godine, "ZA":d.ZA/ukupno_glasova, "PROTIV":d.PROTIV/ukupno_glasova};});
   
   var margin = { top: 20, right: 20, bottom: 50, left: 40 },
   width = 700 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
   
-  var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
+  var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
   // var x1 = d3.scale.ordinal();
   
   var y = d3.scale.linear().range([height, 0]);
@@ -173,19 +175,21 @@ function drawStatisticsOfFriends(data) {
   // });
 
   // x0.domain(data_postoci.map(function (d) { return d.godine; }));
-  x.domain(d3.keys(data)).rangeRoundBands([0, x.rangeBand()]);
-  y.domain([0, (1.1*d3.max(data_postoci, function (d) { return d3.max(d.glasovi, function (d) { return d.value; }); }))]);
+  // x.domain(d3.keys(data)).rangeRoundBands([0, x.rangeBand()]);
+  // y.domain([0,1.1*d3.max(d3.values(data))]);
+  x.domain(data.map(function(d){return d.party;}));
+  y.domain([0,1.1*d3.max(friends_data.map(function(d){return d.votes;}))]);
 
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-        .append("text")
-        .attr("y", 20)
-        .attr("x", width/2)
-        .attr("dy", "20px")
-        .style("text-anchor", "end")
-        .text("godine");
+      .call(xAxis);
+        // .append("text")
+        // .attr("y", 20)
+        // .attr("x", width/2)
+        // .attr("dy", "20px")
+        // .style("text-anchor", "end")
+        // .text("godine");
   
   svg.append("g")
       .attr("class", "y axis")
@@ -197,80 +201,91 @@ function drawStatisticsOfFriends(data) {
       .style("text-anchor", "end")
       .text("postotak glasova");
   
-  d3.selectAll(".axis text").style("font-size","15px");
+  // d3.selectAll(".axis text").style("font-size","15px");
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.party); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.votes); })
+      .attr("height", function(d) { return height - y(d.votes); })
+      .attr("fill", "steelblue");
+      // .attr("fill", function(d) {return color(d.party);});
   
-  var state = svg.selectAll(".state")
-      .data(data_postoci)
-  .enter().append("g")
-      .attr("class", "g")
-      .attr("transform", function (d) { return "translate(" + x0(d.godine) + ",0)"; });
+  // var state = svg.selectAll(".state")
+  //     .data(data_postoci)
+  // .enter().append("g")
+  //     .attr("class", "g")
+  //     .attr("transform", function (d) { return "translate(" + x0(d.godine) + ",0)"; });
   
-  state.selectAll("rect")
-      .data(function (d) { return d.glasovi; })
-  .enter().append("rect")
-      .attr("width", x1.rangeBand())
-      .attr("x", function (d) { return x1(d.name); })
-      .style("fill", function (d) { return color(d.name); })
-      .attr("height", function (d) { return height - y(0); })
-      .attr("y", function (d) { return y(0); })
-      .transition()
-      .duration(1500)
-      .attr("height", function (d) { return height - y(d.value); })
-      .attr("y", function (d) { return y(d.value); });
+  // state.selectAll("rect")
+  //     .data(function (d) { return d.glasovi; })
+  // .enter().append("rect")
+  //     .attr("width", x1.rangeBand())
+  //     .attr("x", function (d) { return x1(d.name); })
+  //     .style("fill", function (d) { return color(d.name); })
+  //     .attr("height", function (d) { return height - y(0); })
+  //     .attr("y", function (d) { return y(0); })
+  //     .transition()
+  //     .duration(1500)
+  //     .attr("height", function (d) { return height - y(d.value); })
+  //     .attr("y", function (d) { return y(d.value); });
   
-  state.selectAll("text")
-  .data(function (d) { return d.glasovi; })
-  .enter(function (d) { return d.glasovi; }).append("text")
-      .attr("y", function (d) { return y(0); })
-      .attr("x", function (d) { return x1(d.name); })
-      .attr("dx",20)
-      .attr("dy",-5)
-      .attr("text-anchor", "middle")
-      .attr("font-family","sans-serif")
-      .attr("font-size","17px")
-      .attr("fill",function (d) { return color(d.name); })
-      .transition()
-      .duration(1500)
-      .attr("y", function (d) { return y(d.value); })
-      .tween("text", 
-        function(d) {
-            var i = d3.interpolate(this.textContent, Math.round(d.value*100));
-            return function(t) {
-                this.textContent = Math.round(i(t)) + "%";
-                };
-        });
+  // state.selectAll("text")
+  // .data(function (d) { return d.glasovi; })
+  // .enter(function (d) { return d.glasovi; }).append("text")
+  //     .attr("y", function (d) { return y(0); })
+  //     .attr("x", function (d) { return x1(d.name); })
+  //     .attr("dx",20)
+  //     .attr("dy",-5)
+  //     .attr("text-anchor", "middle")
+  //     .attr("font-family","sans-serif")
+  //     .attr("font-size","17px")
+  //     .attr("fill",function (d) { return color(d.name); })
+  //     .transition()
+  //     .duration(1500)
+  //     .attr("y", function (d) { return y(d.value); })
+  //     .tween("text", 
+  //       function(d) {
+  //           var i = d3.interpolate(this.textContent, Math.round(d.value*100));
+  //           return function(t) {
+  //               this.textContent = Math.round(i(t)) + "%";
+  //               };
+  //       });
   
-  // A bit of styling
-  d3.selectAll(".axis").style("font","10px sans-serif");
-  d3.selectAll(".axis path, .axis line")
-    .style("fill","none")
-    .style("stroke","#000")
-    .style("shape-rendering","crispEdges");
-  d3.selectAll(".x.axis path");//.style("display","none");
+  // // A bit of styling
+  // d3.selectAll(".axis").style("font","10px sans-serif");
+  // d3.selectAll(".axis path, .axis line")
+  //   .style("fill","none")
+  //   .style("stroke","#000")
+  //   .style("shape-rendering","crispEdges");
+  // d3.selectAll(".x.axis path");//.style("display","none");
   
-  var legend = svg.selectAll(".legend")
-      .data(seriesNames.slice())
-  .enter().append("g")
-      .attr("class", "legend")
-      .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+  // var legend = svg.selectAll(".legend")
+  //     .data(seriesNames.slice())
+  // .enter().append("g")
+  //     .attr("class", "legend")
+  //     .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
   
-  legend.append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", color);
+  // legend.append("rect")
+  //     .attr("x", width - 18)
+  //     .attr("width", 18)
+  //     .attr("height", 18)
+  //     .style("fill", color);
   
-  legend.append("text")
-      .attr("x", width - 24)
-      .attr("y", 9)
-      .attr("dy", ".35em")
-      .style("text-anchor", "end")
-      .style("fill", color)
-      .attr("font-size","15px")
-      .text(function (d) { return d; })
-      .on("click", function (d) {
-          alert(d);
-      });
+  // legend.append("text")
+  //     .attr("x", width - 24)
+  //     .attr("y", 9)
+  //     .attr("dy", ".35em")
+  //     .style("text-anchor", "end")
+  //     .style("fill", color)
+  //     .attr("font-size","15px")
+  //     .text(function (d) { return d; })
+  //     .on("click", function (d) {
+  //         alert(d);
+  //     });
     
   }
 
