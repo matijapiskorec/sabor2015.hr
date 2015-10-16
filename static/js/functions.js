@@ -49,6 +49,12 @@ function init_controls() {
     $('#default-vr-dropdown').val($(this).text());
   });
 
+  $("#button-submit-extra").click(function (e) {
+    if(current_voting_region==-1) {
+      console.log("Nite odabrali izbornu jedinicu");
+    }
+      console.log("Odgovori poslani.");
+  });
 }
 
 function change_btn_vote_style(vote_value) {
