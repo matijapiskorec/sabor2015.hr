@@ -37,6 +37,8 @@
 <script type="text/javascript">
   var current_vote = -1; // 2; //-1;
   var current_meta = "";
+  var currently_selected_vote = -1;
+  var currently_selected_meta = "";
   var current_voting_region = -1;
   // var global_results_raw = "-1";
   // var friends_results_raw = "-1";
@@ -91,12 +93,14 @@
       <div class="col-md-12">
         <h2>Procijenite koliko će vaša stranka osvojiti glasova na izborima.</h2>
         <div class="slider-row">
-          <input id="question-meta" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="50"/>
+          <input id="question-meta" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
         </div>
       </div>
     </div>
 
-    <div style="height:20px;clear:both;"></div>
+    <div style="height:5px;clear:both;"></div>
+    <p id="current-vote-label"></p>
+    <div style="height:5px;clear:both;"></div>
 
     <button id="button-vote" class="btn btn-lg btn-default">Glasaj</button>
 
@@ -106,9 +110,7 @@
 
       <h2>Dodatna pitanja</h2>
       <div style="padding-left:20px;">
-        <h4>Iz koje ste izborne jedinice?</h4>
-        <p>Svoju izbornu jedinicu možete provjeriti <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank"> ovdje </a>.</p>
-        <!-- Izborne jedinice -->
+        <h4>Iz koje ste izborne jedinice? (provjerite <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank"> ovdje</a>)</h4>
         <div class="btn-group">
           <button id="default-vr-dropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             <span id="chosen-field-text">Izaberite izbornu jedinicu...</span> <span class="caret"></span>
@@ -129,14 +131,11 @@
           </ul>
         </div>
 
-        <p>I još pitanja... :) </p>
-        <button id="button-submit-extra" class="btn btn-lg btn-default">Pošalji odgovore na dodatna pitanja</button>
+        <button id="button-submit-extra" class="btn btn-default">Pošalji odgovor</button>
         <hr/>
       </div>
 
       <h2>Rezultati za vaše prijatelje</h2>
-      <p>Ovdje prikazujemo rezultate za prijatelje.</p>
-      <p>Glasovali ste za <span id="current-vote"></span>, i predviđate da će dobit <span id="current-meta"></span>% glasova na izborima.</p>
 
       <div id="statistics-of-friends"></div>
 
@@ -147,7 +146,7 @@
   <hr/>
   <div class="container">
   <footer>
-     <p>@referendum2013.hr</p>
+     <p>@sabor2015.hr</p>
   </footer>
   </div>  
   

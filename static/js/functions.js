@@ -19,13 +19,11 @@ var friends_data = [
 
 $(document).ready(function () {
 
-  // draw_results();
-
   init_controls();
 
-  change_btn_vote_style(current_vote);
+  change_btn_vote_style(currently_selected_vote);
 
-  if (current_vote!=-1) {
+  if (current_vote!=-1 && current_meta!=0) {
     show_results();
   }
 
@@ -34,9 +32,9 @@ $(document).ready(function () {
 function init_controls() {
 
   $("#question-vote button").click(function (e) {
-    current_vote = this.attributes.party.value;
-    change_btn_vote_style(current_vote);
-    console.log('Odabrali ste stranku ' + current_vote);
+    currently_selected_vote = this.attributes.party.value;
+    change_btn_vote_style(currently_selected_vote);
+    console.log('Odabrali ste stranku ' + friends_data[currently_selected_vote].party);
   });
 
   $("#question-meta").slider({
@@ -47,18 +45,29 @@ function init_controls() {
   );
 
   $("#button-vote").click(function (e) {
-    user_vote({'vote': current_vote, 
-               'meta': $("#question-meta").val()
-              });
+
+    currently_selected_meta = $("#question-meta").val();
+
+    if (currently_selected_vote!=-1 && currently_selected_meta!=0) {
+      $('#current-vote-label').text('Glasovali ste za stranku ' + friends_data[currently_selected_vote].party + ' i predviđate da će dobiti ' + currently_selected_meta + '% glasova na izborima.');
+    
+      user_vote({'vote': currently_selected_vote, 
+                 'meta': currently_selected_meta
+                });
+    }
+    else {
+      $('#current-vote-label').html('<span style="color:red">Molim vas odgovorite na oba pitanja!</span>');
+    }
+
   });
 
   $('#question-vote button').hover(function () {
-    if (current_vote != this.attributes.party.value) {
+    if (currently_selected_vote != this.attributes.party.value) {
       $(this).removeClass('btn-default');
       $(this).addClass('btn-info');
     }
   }, function () {
-    if (current_vote != this.attributes.party.value) {
+    if (currently_selected_vote != this.attributes.party.value) {
       $(this).removeClass('btn-info');
       $(this).addClass('btn-default');
     }
@@ -78,7 +87,7 @@ function init_controls() {
     if(current_voting_region==-1) {
       console.log("Nite odabrali izbornu jedinicu");
     }
-      console.log("Odgovori poslani.");
+      console.log("Vaša izborna jedinica (" + current_voting_region + ") je zabilježena.");
   });
 }
 
@@ -95,19 +104,12 @@ function change_btn_vote_style(vote_value) {
 }
 
 function show_results() {
-  // $('#results').removeClass('results-hidden');
-  // $('#results').addClass('results-visible');
   $('#results').show(1000);
-
-  $('#current-vote').text(current_vote);
-  $('#current-meta').text(current_meta);
 
   drawStatisticsOfFriends(friends_data);
 }
 
 function hide_results() {
-  // $('#results').removeClass('results-visible');
-  // $('#results').addClass('results-hidden');
   $('#results').hide();
 }
 
@@ -115,18 +117,14 @@ function user_vote(d) {
 
   current_vote = d.vote;
   current_meta = d.meta;
-  console.log('Glasali ste za stranku ' + current_vote);
-  if (current_meta) {
-    console.log('Vase meta pitanje je ' + current_meta);
-  }
-  else {
-    console.log('Niste odgovorili na meta pitanje:-(');
-  }
+
+  console.log('Vaš glas za stranku ' + friends_data[current_vote].party + ' (redni broj ' + current_vote + ') je zabilježen.');
+  console.log('Vaš odgovor na meta pitanje (' + current_meta + '%) je zabilježen.');
 
   show_results();
 
+  // // TODO: Here goes ajax call!
   // var data = 'vote=' + vote_value;
-  // //start the ajax
   // $.ajax({
   //   url: "/vote/",
   //   type: "POST",
@@ -160,12 +158,12 @@ function drawStatisticsOfFriends(data) {
   
   var xAxis = d3.svg.axis()
     .scale(x)
+    .ticks(10, "%")
     .orient("top");
 
   var yAxis = d3.svg.axis()
     .scale(y)
-    .ticks(15, "%")
-    .orient("left"); // vertical bars
+    .orient("left");
 
   $("#statistics-of-friends").empty();
   
@@ -179,24 +177,24 @@ function drawStatisticsOfFriends(data) {
   y.domain(data.map(function(d){return d.party;}));
   
   svg.append("g")
-      .attr("class", "x axis") // .attr("transform", "translate(0," + height + ")")
+      .attr("class", "x axis")
       .call(xAxis)
-  .append("text") // .attr("transform", "rotate(-90)")
+  .append("text")
       .attr("x", width/2)
       .attr("dy", "-30px")
       .style("text-anchor", "center")
       .text("postotak glasova");
   svg.append("g")
-      .attr("class", "y axis") // .attr("transform", "translate(-15,0)") // So that we aviod clash with axis label.
+      .attr("class", "y axis")
       .call(yAxis);
 
-  // d3.selectAll(".axis text").style("font-size","15px");
+  d3.selectAll(".axis text").style("font-size","15px");
 
   svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", 0) //.attr("x", function(d) { return width - x(d.votes); })
+      .attr("x", 0)
       .attr("width", function(d) { return x(d.votes); })
       .attr("y", function(d) { return y(d.party); })
       .attr("height", y.rangeBand())
@@ -207,78 +205,26 @@ function drawStatisticsOfFriends(data) {
         return d3.interpolate(0, x(d.votes));
       });
   
-  // var state = svg.selectAll(".state")
-  //     .data(data_postoci)
-  // .enter().append("g")
-  //     .attr("class", "g")
-  //     .attr("transform", function (d) { return "translate(" + x0(d.godine) + ",0)"; });
-  
-  // state.selectAll("rect")
-  //     .data(function (d) { return d.glasovi; })
-  // .enter().append("rect")
-  //     .attr("width", x1.rangeBand())
-  //     .attr("x", function (d) { return x1(d.name); })
-  //     .style("fill", function (d) { return color(d.name); })
-  //     .attr("height", function (d) { return height - y(0); })
-  //     .attr("y", function (d) { return y(0); })
-  //     .transition()
-  //     .duration(1500)
-  //     .attr("height", function (d) { return height - y(d.value); })
-  //     .attr("y", function (d) { return y(d.value); });
-  
-  // state.selectAll("text")
-  // .data(function (d) { return d.glasovi; })
-  // .enter(function (d) { return d.glasovi; }).append("text")
-  //     .attr("y", function (d) { return y(0); })
-  //     .attr("x", function (d) { return x1(d.name); })
-  //     .attr("dx",20)
-  //     .attr("dy",-5)
-  //     .attr("text-anchor", "middle")
-  //     .attr("font-family","sans-serif")
-  //     .attr("font-size","17px")
-  //     .attr("fill",function (d) { return color(d.name); })
-  //     .transition()
-  //     .duration(1500)
-  //     .attr("y", function (d) { return y(d.value); })
-  //     .tween("text", 
-  //       function(d) {
-  //           var i = d3.interpolate(this.textContent, Math.round(d.value*100));
-  //           return function(t) {
-  //               this.textContent = Math.round(i(t)) + "%";
-  //               };
-  //       });
-  
-  // // A bit of styling
-  // d3.selectAll(".axis").style("font","10px sans-serif");
-  // d3.selectAll(".axis path, .axis line")
-  //   .style("fill","none")
-  //   .style("stroke","#000")
-  //   .style("shape-rendering","crispEdges");
-  // d3.selectAll(".x.axis path");//.style("display","none");
-  
-  // var legend = svg.selectAll(".legend")
-  //     .data(seriesNames.slice())
-  // .enter().append("g")
-  //     .attr("class", "legend")
-  //     .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
-  
-  // legend.append("rect")
-  //     .attr("x", width - 18)
-  //     .attr("width", 18)
-  //     .attr("height", 18)
-  //     .style("fill", color);
-  
-  // legend.append("text")
-  //     .attr("x", width - 24)
-  //     .attr("y", 9)
-  //     .attr("dy", ".35em")
-  //     .style("text-anchor", "end")
-  //     .style("fill", color)
-  //     .attr("font-size","15px")
-  //     .text(function (d) { return d; })
-  //     .on("click", function (d) {
-  //         alert(d);
-  //     });
+  svg.selectAll(".bar-text")
+     .data(data)
+  .enter().append("text")
+      .attr("x", function(d) { return x(d.votes); })
+      .attr("y", function(d) { return y(d.party); })
+      .attr("dx",20)
+      .attr("dy",15)
+      .attr("text-anchor", "middle")
+      .transition()
+      .duration(1500)
+      .tween("text", 
+        function(d) {
+            var i = d3.interpolate(this.textContent, Math.round(d.votes*100));
+            return function(t) {
+                this.textContent = Math.round(i(t)) + "%";
+                };
+        })
+      .attrTween("x", function (d) {
+        return d3.interpolate(0, x(d.votes));
+      });
     
   }
 
