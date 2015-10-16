@@ -39,6 +39,13 @@ function init_controls() {
     console.log('Odabrali ste stranku ' + current_vote);
   });
 
+  $("#question-meta").slider({
+      ticks: [0, 10, 20, 30, 40, 50, 60, 70, 80,90, 100],
+      ticks_labels: ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
+      ticks_snap_bounds: 1
+    }
+  );
+
   $("#button-vote").click(function (e) {
     user_vote({'vote': current_vote, 
                'meta': $("#question-meta").val()

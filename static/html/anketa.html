@@ -28,6 +28,7 @@
 
 <link rel="stylesheet" href="../css/base.css" type="text/css" media="all" />
 <link rel="stylesheet" href="../css/charts.css" type="text/css" media="all" />
+<link rel="stylesheet" href="../css/bootstrap-slider.css" type="text/css" media="all" />
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -41,7 +42,7 @@
   // var friends_results_raw = "-1";
 </script>
 <script src="../js/functions.js"></script>
-
+<script src="../js/bootstrap-slider.js"></script>
 
 </head>
 <body>
@@ -89,7 +90,9 @@
     <div class="row">
       <div class="col-md-12">
         <h2>Procijenite koliko će vaša stranka osvojiti glasova na izborima.</h2>
-        <input id="question-meta" type="text" class="form-control" placeholder="unesite postotak" aria-describedby="basic-addon1" style="width:200px">
+        <div class="slider-row">
+          <input id="question-meta" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="50"/>
+        </div>
       </div>
     </div>
 

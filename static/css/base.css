@@ -33,6 +33,12 @@
   
 }
 
+.slider-row {
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
 /*.results-hidden {
   display: none;
 }
