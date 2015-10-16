@@ -34,6 +34,7 @@
   <script type="text/javascript">
     var current_vote = -1; // 2; //-1;
     var current_meta = "";
+    var current_voting_region = -1;
     // var global_results_raw = "-1";
     // var friends_results_raw = "-1";
   </script>
@@ -56,7 +57,6 @@
   </div>
 
   <hr />
-
 
   <div class="container">
 
@@ -99,8 +99,30 @@
     <div id="results" style="display:none;"> <!-- class="results-hidden"> -->
 
     <h2>Dodatna pitanja</h2>
-    <p>Dodatna pitanja za marljive!</p>
+      <p>Iz koje ste izborne jedinice?</p>
+      <p>Svoju izbornu jedinicu možete provjeriti <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank"> ovdje </a>.</p>
+      <!-- Izborne jedinice -->
+      <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+           Izaberite izbornu jedinicu...<span class="caret"></span>
+        </button>
+        <ul id="voting-region"  class="dropdown-menu" role="menu">
+          <li region_id="1"><a href="#">I. izborna jedinica</a></li>
+          <li region_id="2"><a href="#">II. izborna jedinica</a></li>
+          <li region_id="3"><a href="#">III. izborna jedinica</a></li>
+          <li region_id="4"><a href="#">IV. izborna jedinica</a></li>
+          <li region_id="5"><a href="#">V. izborna jedinica</a></li>
+          <li region_id="6"><a href="#">VI. izborna jedinica</a></li>
+          <li region_id="7"><a href="#">VII. izborna jedinica</a></li>
+          <li region_id="8"><a href="#">VIII. izborna jedinica</a></li>
+          <li region_id="9"><a href="#">IX. izborna jedinica</a></li>
+          <li region_id="10"><a href="#">X. izborna jedinica</a></li>
+          <li region_id="11"><a href="#">XI. izborna jedinica (Dijaspora)</a></li>
+          <li region_id="12"><a href="#">XII. izborna jedinica (Manjine)</a></li>
+        </ul>
+      </div>
 
+      <p>I još pitanja... :) </p>
     <hr/>
 
     <h2>Rezultati za vaše prijatelje</h2>
