@@ -144,11 +144,6 @@ function drawStatisticsOfFriends(data) {
   width = 700 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
   
-  // // Vertical bars
-  // var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
-  // var y = d3.scale.linear().range([height, 0]);
-  
-  // Horizontal bars
   var x = d3.scale.linear().range([width, 0]);
   var y = d3.scale.ordinal().rangeRoundBands([0, height], .1);
 
@@ -159,45 +154,23 @@ function drawStatisticsOfFriends(data) {
   var xAxis = d3.svg.axis()
     .scale(x)
     .orient("top");
-    // .orient("bottom"); // vertical bars
 
   var yAxis = d3.svg.axis()
     .scale(y)
     .ticks(15, "%")
     .orient("left"); // vertical bars
+
+  $("#statistics-of-friends").empty();
   
-  var svg = d3.select("#results").append("svg")
+  var svg = d3.select("#statistics-of-friends").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  
-  // // Vertical bars
-  // x.domain(data.map(function(d){return d.party;}));
-  // y.domain([0,1.1*d3.max(friends_data.map(function(d){return d.votes;}))]);
 
-  // Horizontal bars
-  // x.domain([0,1.1*d3.max(friends_data.map(function(d){return d.votes;}))]);
   x.domain([1.1*d3.max(friends_data.map(function(d){return d.votes;})),0]);
   y.domain(data.map(function(d){return d.party;}));
-
-  // // Vertical bars
-  // svg.append("g")
-  //     .attr("class", "x axis")
-  //     .attr("transform", "translate(0," + height + ")")
-  //     .call(xAxis);
-  // svg.append("g")
-  //     .attr("class", "y axis")
-  //     .attr("transform", "translate(-15,0)") // So that we aviod clash with axis label.
-  //     .call(yAxis)
-  // .append("text")
-  //     .attr("transform", "rotate(-90)")
-  //     .attr("y", 6)
-  //     .attr("dy", ".71em")
-  //     .style("text-anchor", "end")
-  //     .text("postotak glasova");
   
-  // Horizontal bars
   svg.append("g")
       .attr("class", "x axis") // .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
@@ -212,19 +185,6 @@ function drawStatisticsOfFriends(data) {
 
   // d3.selectAll(".axis text").style("font-size","15px");
 
-  // // Vertical bars
-  // svg.selectAll(".bar")
-  //     .data(data)
-  //   .enter().append("rect")
-  //     .attr("class", "bar")
-  //     .attr("x", function(d) { return x(d.party); })
-  //     .attr("width", x.rangeBand())
-  //     .attr("y", function(d) { return y(d.votes); })
-  //     .attr("height", function(d) { return height - y(d.votes); })
-  //     .attr("fill", "steelblue");
-  //     // .attr("fill", function(d) {return color(d.party);});
-
-  // Horizontal bars
   svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
@@ -233,7 +193,9 @@ function drawStatisticsOfFriends(data) {
       .attr("width", function(d) { return x(d.votes); })
       .attr("y", function(d) { return y(d.party); })
       .attr("height", y.rangeBand())
-      .attr("fill", "steelblue");
+      .attr("fill", "steelblue")
+      .transition()
+      .duration(1500);
   
   // var state = svg.selectAll(".state")
   //     .data(data_postoci)
