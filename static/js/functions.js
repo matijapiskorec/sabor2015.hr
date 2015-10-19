@@ -31,10 +31,13 @@ $(document).ready(function () {
 
 function init_controls() {
 
-  $("#question-vote button").click(function (e) {
-    currently_selected_vote = this.attributes.party.value;
-    change_btn_vote_style(currently_selected_vote);
-    console.log('Odabrali ste stranku ' + friends_data[currently_selected_vote].party);
+  $("#question-vote").multiselect({
+    onChange: function(option, checked, select) {
+        currently_selected_vote = $(option).val();
+        change_btn_vote_style(currently_selected_vote);
+        console.log('Odabrali ste stranku ' + $(option).text() + ' (redni broj ' + $(option).val() + ')');  
+      },
+    nonSelectedText: 'Odaberite stranku...'
   });
 
   $("#question-meta").slider({
@@ -59,18 +62,6 @@ function init_controls() {
       $('#current-vote-label').html('<span style="color:red">Molim vas odgovorite na oba pitanja!</span>');
     }
 
-  });
-
-  $('#question-vote button').hover(function () {
-    if (currently_selected_vote != this.attributes.party.value) {
-      $(this).removeClass('btn-default');
-      $(this).addClass('btn-info');
-    }
-  }, function () {
-    if (currently_selected_vote != this.attributes.party.value) {
-      $(this).removeClass('btn-info');
-      $(this).addClass('btn-default');
-    }
   });
 
   $('#voting-region li').click(function (e) {

@@ -46,6 +46,9 @@
 <script src="../js/functions.js"></script>
 <script src="../js/bootstrap-slider.js"></script>
 
+<script src="../bootstrap-multiselect/bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="../bootstrap-multiselect/bootstrap-multiselect.css" type="text/css" media="all" />
+
 </head>
 <body>
   <div class="navbar navbar-default navbar-static-top" role="navigation">
@@ -69,23 +72,24 @@
     <div class="row">
       <div class="col-md-12">
         <h2>Za koga ćete glasati na izborima?</h2>
-        <div id="question-vote" class="btn-group" role="group" aria-label="...">
-          <button party="0" type="button" class="btn btn-default">HDZ</button>
-          <button party="1" type="button" class="btn btn-default">SDP</button>
-          <button party="2" type="button" class="btn btn-default">Orah</button>
-          <button party="3" type="button" class="btn btn-default">Živi zid</button>
-          <button party="4" type="button" class="btn btn-default">HSS</button>
-          <button party="5" type="button" class="btn btn-default">HNS</button>
-          <button party="6" type="button" class="btn btn-default">HDSSB</button>
-          <button party="7" type="button" class="btn btn-default">Most nezavisnih lista</button>
-          <button party="8" type="button" class="btn btn-default">Stranka Milana Bandića</button>
-          <button party="9" type="button" class="btn btn-default">Hrvatski laburisti</button>
-          <button party="10" type="button" class="btn btn-default">IDS</button>
-          <button party="11" type="button" class="btn btn-default">HSP AS</button>
-          <button party="12" type="button" class="btn btn-default">HSU</button>
-          <button party="13" type="button" class="btn btn-default">HSP</button>
-          <button party="14" type="button" class="btn btn-default">ostali</button>
-        </div>
+        <!-- size="2" is a workaround so that first option is not automatically selected https://github.com/davidstutz/bootstrap-multiselect/issues/129 -->
+        <select id="question-vote" size="2"> 
+          <option value="0">HDZ</option>
+          <option value="1">SDP</option>
+          <option value="2">Orah</option>
+          <option value="3">Živi zid</option>
+          <option value="4">HSS</option>
+          <option value="5">HNS</option>
+          <option value="6">HDSSB</option>
+          <option value="7">Most nezavisnih lista</option>
+          <option value="8">Stranka Milana Bandića</option>
+          <option value="9">Hrvatski laburisti</option>
+          <option value="10">IDS</option>
+          <option value="11">HSP AS</option>
+          <option value="12">HSU</option>
+          <option value="13">HSP</option>
+          <option value="14">ostali</option>
+        </select >
       </div>
     </div>
 
