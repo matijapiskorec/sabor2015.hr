@@ -40,10 +40,9 @@
   var currently_selected_vote = -1;
   var currently_selected_meta = "";
   var current_voting_region = -1;
-  // var global_results_raw = "-1";
-  // var friends_results_raw = "-1";
 </script>
 <script src="../js/functions.js"></script>
+<script src="../js/lodash.min.js"></script>
 <script src="../js/bootstrap-slider.js"></script>
 
 <script src="../bootstrap-multiselect/bootstrap-multiselect.js"></script>
@@ -70,37 +69,46 @@
   <div class="container">
 
     <div class="row">
-      <div class="col-md-12">
-        <h2>Za koga ćete glasati na izborima?</h2>
+
+    <h2>Pitanja</h2>
+
+      <div class="col-md-6">
+        <h3>Iz koje ste izborne jedinice?</h3>
+        <p>(provjerite <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank"> ovdje</a>)</p>
         <!-- size="2" is a workaround so that first option is not automatically selected https://github.com/davidstutz/bootstrap-multiselect/issues/129 -->
-        <select id="question-vote" size="2"> 
-          <option value="0">HDZ</option>
-          <option value="1">SDP</option>
-          <option value="2">Orah</option>
-          <option value="3">Živi zid</option>
-          <option value="4">HSS</option>
-          <option value="5">HNS</option>
-          <option value="6">HDSSB</option>
-          <option value="7">Most nezavisnih lista</option>
-          <option value="8">Stranka Milana Bandića</option>
-          <option value="9">Hrvatski laburisti</option>
-          <option value="10">IDS</option>
-          <option value="11">HSP AS</option>
-          <option value="12">HSU</option>
-          <option value="13">HSP</option>
-          <option value="14">ostali</option>
+        <select id="question-region" size="2"> 
+          <option value="1">I. izborna jedinica</option>
+          <option value="2">II. izborna jedinica</option>
+          <option value="3">III. izborna jedinica</option>
+          <option value="4">IV. izborna jedinica</option>
+          <option value="5">V. izborna jedinica</option>
+          <option value="6">VI. izborna jedinica</option>
+          <option value="7">VII. izborna jedinica</option>
+          <option value="8">VIII. izborna jedinica</option>
+          <option value="9">IX. izborna jedinica</option>
+          <option value="10">X. izborna jedinica</option>
+          <option value="11">XI. izborna jedinica (Dijaspora)</option>
+          <option value="12">XII. izborna jedinica (Manjine)</option>
         </select >
       </div>
+
+      <div class="col-md-6">
+        <h3>Za koga ćete glasati na izborima?</h3>
+        <!-- size="2" is a workaround so that first option is not automatically selected https://github.com/davidstutz/bootstrap-multiselect/issues/129 -->
+        <select id="question-vote" size="2"></select >
+      </div>
+
     </div>
 
     <div class="row">
       <div class="col-md-12">
-        <h2>Procijenite koliko će vaša stranka osvojiti glasova na izborima.</h2>
+        <h3>Procijenite udio glasova koji će vaša stranka osvojiti u vašoj izbornoj jedinici.</h3>
         <div class="slider-row">
           <input id="question-meta" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
         </div>
       </div>
     </div>
+    
 
     <div style="height:5px;clear:both;"></div>
     <p id="current-vote-label"></p>
@@ -112,36 +120,50 @@
 
     <div id="results" style="display:none;"> <!-- class="results-hidden"> -->
 
-      <h2>Dodatna pitanja</h2>
-      <div style="padding-left:20px;">
-        <h4>Iz koje ste izborne jedinice? (provjerite <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank"> ovdje</a>)</h4>
-        <div class="btn-group">
-          <button id="default-vr-dropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-            <span id="chosen-field-text">Izaberite izbornu jedinicu...</span> <span class="caret"></span>
-          </button>
-          <ul id="voting-region"  class="dropdown-menu" role="menu">
-            <li region_id="1"><a href="#">I. izborna jedinica</a></li>
-            <li region_id="2"><a href="#">II. izborna jedinica</a></li>
-            <li region_id="3"><a href="#">III. izborna jedinica</a></li>
-            <li region_id="4"><a href="#">IV. izborna jedinica</a></li>
-            <li region_id="5"><a href="#">V. izborna jedinica</a></li>
-            <li region_id="6"><a href="#">VI. izborna jedinica</a></li>
-            <li region_id="7"><a href="#">VII. izborna jedinica</a></li>
-            <li region_id="8"><a href="#">VIII. izborna jedinica</a></li>
-            <li region_id="9"><a href="#">IX. izborna jedinica</a></li>
-            <li region_id="10"><a href="#">X. izborna jedinica</a></li>
-            <li region_id="11"><a href="#">XI. izborna jedinica (Dijaspora)</a></li>
-            <li region_id="12"><a href="#">XII. izborna jedinica (Manjine)</a></li>
-          </ul>
-        </div>
+      <div class="row">
+        <div class="col-md-12">
 
-        <button id="button-submit-extra" class="btn btn-default">Pošalji odgovor</button>
-        <hr/>
+          <h2>Dodatna pitanja</h2>
+
+          <div style="padding-left:20px;">
+            <h3>Iz koje ste izborne jedinice?</h3>
+            <p>(provjerite <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank"> ovdje</a>)</p>
+            <div class="btn-group">
+              <button id="default-vr-dropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span id="chosen-field-text">Izaberite izbornu jedinicu...</span> <span class="caret"></span>
+              </button>
+              <ul id="voting-region"  class="dropdown-menu" role="menu">
+                <li region_id="1"><a href="#">I. izborna jedinica</a></li>
+                <li region_id="2"><a href="#">II. izborna jedinica</a></li>
+                <li region_id="3"><a href="#">III. izborna jedinica</a></li>
+                <li region_id="4"><a href="#">IV. izborna jedinica</a></li>
+                <li region_id="5"><a href="#">V. izborna jedinica</a></li>
+                <li region_id="6"><a href="#">VI. izborna jedinica</a></li>
+                <li region_id="7"><a href="#">VII. izborna jedinica</a></li>
+                <li region_id="8"><a href="#">VIII. izborna jedinica</a></li>
+                <li region_id="9"><a href="#">IX. izborna jedinica</a></li>
+                <li region_id="10"><a href="#">X. izborna jedinica</a></li>
+                <li region_id="11"><a href="#">XI. izborna jedinica (Dijaspora)</a></li>
+                <li region_id="12"><a href="#">XII. izborna jedinica (Manjine)</a></li>
+              </ul>
+            </div>
+
+            <button id="button-submit-extra" class="btn btn-default">Pošalji odgovor</button>
+            <hr/>
+          </div>
+
+        </div>
       </div>
 
-      <h2>Rezultati za vaše prijatelje</h2>
+      <div class="row">
+        <div class="col-md-12">
 
-      <div id="statistics-of-friends"></div>
+          <h2>Rezultati za vaše prijatelje</h2>
+
+          <div id="statistics-of-friends"></div>
+
+        </div>
+      </div>
 
     </div>
  
