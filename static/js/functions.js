@@ -19,15 +19,15 @@ var friends_data = [
 
 // Get them while they are hot: http://www.izbori.hr/140zas/kandid/1/kandid.html
 var election_regions = [
-  {'party_id': 1, 'party': 'ALBANSKA, BOŠNJAČKA, CRNOGORSKA, MAKEDONSKA I SLOVENSKA NACIONALNA MANJINA, ALEN DŽOMBA (kandidat), NAPRIJED HRVATSKA! - PROGRESIVNI SAVEZ IVE JOSIPOVIĆA, UDRUGA BOŠNJAKA BRANITELJA DOMOVINSKOG RATA VUKOVARSKO - SRIJEMSKE ŽUPANIJE, BOŠNJAČKO KULTURNO UMJETNIČKO DRUŠTVO "BEHAR" GUNJA ', 'regions': [12]},
-  {'party_id': 2, 'party': 'ALBANSKA, BOŠNJAČKA, CRNOGORSKA, MAKEDONSKA I SLOVENSKA NACIONALNA MANJINA, ALIJA AVDIĆ, dipl. krim. (kandidat), STRANKA BOŠNJAKA HRVATSKE - SBH ', 'regions': [12]},
-  {'party_id': 3, 'party': 'AUTOHTONA - HRVATSKA STRANKA PRAVA - A - HSP', 'regions': [1,2,3,4,5,6,7,8,9,10]},
-  {'party_id': 4, 'party': 'NAPRIJED HRVATSKA! - PROGRESIVNI SAVEZ IVE JOSIPOVIĆA, NARODNA STRANKA - REFORMISTI - REFORMISTI, STRANKA HRVATSKIH UMIROVLJENIKA - UMIROVLJENICI, ZELENI FORUM, DUBROVAČKI DEMOKRATSKI SABOR - DDS ', 'regions': [1,2,4,7,8]},
-  {'party_id': 5, 'party': 'HRVATSKA KONZERVATIVNA STRANKA - HKS, HRVATSKA STRANKA PRAVA - HSP, OBITELJSKA STRANKA - OS ', 'regions': [1,2,3,4,5,6,7,8,9,10,11]},
-  {'party_id': 6, 'party': 'SOCIJALDEMOKRATSKA PARTIJA HRVATSKE - SDP, HRVATSKA NARODNA STRANKA - LIBERALNI DEMOKRATI - HNS, HRVATSKA STRANKA UMIROVLJENIKA - HSU, HRVATSKI LABURISTI - STRANKA RADA, AUTOHTONA - HRVATSKA SELJAČKA STRANKA - A - HSS, ZAGORSKA STRANKA - ZS, SAMOSTALNA DEMOKRATSKA SRPSKA STRANKA - SDSS', 'regions': [1,2,3,4,5,6,7,8,9,10]},
-  {'party_id': 7, 'party': 'HRVATSKA DEMOKRATSKA ZAJEDNICA - HDZ, HRVATSKA SELJAČKA STRANKA - HSS, HRVATSKA STRANKA PRAVA DR. ANTE STARČEVIĆ - HSP AS, BLOK UMIROVLJENICI ZAJEDNO - BUZ, HRVATSKA SOCIJALNO - LIBERALNA STRANKA - HSLS, HRVATSKI RAST - HRAST, HRVATSKA DEMOKRŠĆANSKA STRANKA - HDS, ZAGORSKA DEMOKRATSKA STRANKA - ZDS ', 'regions': [1,2,3,4,5,6,7,8]},
-  {'party_id': 8, 'party': 'ŽIVI ZID', 'regions': [2,3,4,5,6,7,8]},
-  {'party_id': 9, 'party': 'ODRŽIVI RAZVOJ HRVATSKE - ORaH ', 'regions': [1,2,3,4,5,6,7,8,9,10]},
+  {'party_id': 1, 'short_name': 'Lista Alena Džombe', 'party': 'ALBANSKA, BOŠNJAČKA, CRNOGORSKA, MAKEDONSKA I SLOVENSKA NACIONALNA MANJINA, ALEN DŽOMBA (kandidat), NAPRIJED HRVATSKA! - PROGRESIVNI SAVEZ IVE JOSIPOVIĆA, UDRUGA BOŠNJAKA BRANITELJA DOMOVINSKOG RATA VUKOVARSKO - SRIJEMSKE ŽUPANIJE, BOŠNJAČKO KULTURNO UMJETNIČKO DRUŠTVO "BEHAR" GUNJA ', 'regions': [12]},
+  {'party_id': 2, 'short_name': 'Lista Alije Avdića', 'party': 'ALBANSKA, BOŠNJAČKA, CRNOGORSKA, MAKEDONSKA I SLOVENSKA NACIONALNA MANJINA, ALIJA AVDIĆ, dipl. krim. (kandidat), STRANKA BOŠNJAKA HRVATSKE - SBH ', 'regions': [12]},
+  {'party_id': 3, 'short_name': 'A - HSP', 'party': 'AUTOHTONA - HRVATSKA STRANKA PRAVA - A - HSP', 'regions': [1,2,3,4,5,6,7,8,9,10]},
+  {'party_id': 4, 'short_name': 'Naprijed Hrvatska!', 'party': 'NAPRIJED HRVATSKA! - PROGRESIVNI SAVEZ IVE JOSIPOVIĆA, NARODNA STRANKA - REFORMISTI - REFORMISTI, STRANKA HRVATSKIH UMIROVLJENIKA - UMIROVLJENICI, ZELENI FORUM, DUBROVAČKI DEMOKRATSKI SABOR - DDS ', 'regions': [1,2,4,7,8]},
+  {'party_id': 5, 'short_name': 'HKS, HSP, OS', 'party': 'HRVATSKA KONZERVATIVNA STRANKA - HKS, HRVATSKA STRANKA PRAVA - HSP, OBITELJSKA STRANKA - OS ', 'regions': [1,2,3,4,5,6,7,8,9,10,11]},
+  {'party_id': 6, 'short_name': 'SDP, HNS, HSU, Laburisti, A-HSS, ZS', 'party': 'SOCIJALDEMOKRATSKA PARTIJA HRVATSKE - SDP, HRVATSKA NARODNA STRANKA - LIBERALNI DEMOKRATI - HNS, HRVATSKA STRANKA UMIROVLJENIKA - HSU, HRVATSKI LABURISTI - STRANKA RADA, AUTOHTONA - HRVATSKA SELJAČKA STRANKA - A - HSS, ZAGORSKA STRANKA - ZS, SAMOSTALNA DEMOKRATSKA SRPSKA STRANKA - SDSS', 'regions': [1,2,3,4,5,6,7,8,9,10]},
+  {'party_id': 7, 'short_name': 'HDZ, HSS, HSP AS, BUZ, HSLS, HRAST, HDS, ZDS', 'party': 'HRVATSKA DEMOKRATSKA ZAJEDNICA - HDZ, HRVATSKA SELJAČKA STRANKA - HSS, HRVATSKA STRANKA PRAVA DR. ANTE STARČEVIĆ - HSP AS, BLOK UMIROVLJENICI ZAJEDNO - BUZ, HRVATSKA SOCIJALNO - LIBERALNA STRANKA - HSLS, HRVATSKI RAST - HRAST, HRVATSKA DEMOKRŠĆANSKA STRANKA - HDS, ZAGORSKA DEMOKRATSKA STRANKA - ZDS ', 'regions': [1,2,3,4,5,6,7,8]},
+  {'party_id': 8, 'short_name': 'Živi Zid', 'party': 'ŽIVI ZID', 'regions': [2,3,4,5,6,7,8]},
+  {'party_id': 9, 'short_name': 'ORaH', 'party': 'ODRŽIVI RAZVOJ HRVATSKE - ORaH', 'regions': [1,2,3,4,5,6,7,8,9,10]},
 ];
 
 var parties = [
@@ -55,7 +55,21 @@ function init_controls() {
     nonSelectedText: 'Prije izbora stranke odaberite izbornu jedinicu!',
     onChange: function(option, checked, select) {
         currently_selected_vote = $(option).val();
-        console.log('Odabrali ste stranku ' + $(option).text() + ' (redni broj ' + $(option).val() + ')');  
+
+        console.log('Odabrali ste sljedeću listu:');
+
+        $('#currently-selected-party-label').empty();
+        $('#currently-selected-party-label').append('Odabrali ste sljedeću listu:')
+        var temp_parties = _.pluck(_.where(election_regions,{'party_id':Number(currently_selected_vote)}), 'party');
+        var currently_selected_parties = temp_parties[0].split(',').map(function(d){return d.trim();});
+
+        console.log(currently_selected_parties);
+
+        currently_selected_parties.forEach( function(d) {
+            $('#currently-selected-party-label').append(
+              '<p style="margin-bottom:0px;">' + d + '</p>'
+              );
+          });
       }
   });
 
@@ -67,12 +81,15 @@ function init_controls() {
         
         console.log('Odabrali ste izbornu jedinicu ' + currently_selected_region );
 
+        $('#current-vote-label').empty();
+        $('#currently-selected-party-label').empty();
+
         // Build dropdown menu for parties based on chosen election region
         $('#question-vote').empty();
         var parties_in_region = election_regions.filter(function(d){return _.includes(d.regions,Number(currently_selected_region));});
         parties_in_region.forEach( function(d) {
             $('#question-vote').append(
-              '<option value="' + d.party_id + '">' + d.party + '</option>'
+              '<option value="' + d.party_id + '">' + d.short_name + '</option>'
               );
           });
         $("#question-vote").multiselect('setOptions',{
@@ -94,8 +111,9 @@ function init_controls() {
     currently_selected_meta = $("#question-meta").val();
 
     if (currently_selected_vote!=-1 && currently_selected_meta!=0 && currently_selected_region!=-1) {
-      var temp_party = _.pluck(_.where(election_regions,{'party_id':Number(currently_selected_vote)}), 'party');
-      $('#current-vote-label').text('Glasovali ste za stranku ' + temp_party + ' (' + currently_selected_region + ' izborna jedinica) i predviđate da će dobiti ' + currently_selected_meta + '% glasova na izborima.');
+      var temp_party = _.pluck(_.where(election_regions,{'party_id':Number(currently_selected_vote)}), 'short_name');
+      // $('#current-vote-label').text('Glasali ste za stranku ' + temp_party + ' (' + currently_selected_region + ' izborna jedinica) i predviđate da će dobiti ' + currently_selected_meta + '% glasova na izborima.');
+      $('#current-vote-label').text('Glasali ste za izbornu listu ' + temp_party + ' (' + currently_selected_region + ' izborna jedinica) i predviđate da će dobiti ' + currently_selected_meta + '% glasova na izborima.');
     
       user_vote({'vote': currently_selected_vote, 
                  'meta': currently_selected_meta,
@@ -140,12 +158,16 @@ function init_controls() {
     // We can fetch selected parties in onChange callback of multiselect, but it's better to do it directly here.
     selected_parties = [];
     $('#question-parties option:selected').each(function(i,d){
-        // selected_parties.push({'id': $(this).val(), 'party': $(this).text()});
-        selected_parties.push($(this).val());
+        selected_parties.push($(this).val()); // If we want text then use $(this).text()
     });
 
     if (selected_parties.length!=0) {
-      $('#current-vote-extra-label').text('Stranke koje simpatizirate su zabilježene. Hvala!');
+      var selected_parties_names = selected_parties.map(function(d){return _.pluck(_.where(parties,{'id':Number(d)}),'name')[0];});
+      $('#current-vote-extra-label').text('Sljedeće stranke simpatizirate: '); // + selected_parties_names.join(', '));
+      selected_parties_names.forEach(function(d) {
+         $('#current-vote-extra-label').append('<p style="margin-bottom:0px;">' + d + '</p>');
+      });
+
       user_vote_extra({'parties': selected_parties});
     }
     else {
