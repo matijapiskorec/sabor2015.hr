@@ -30,6 +30,15 @@ var election_regions = [
   {'party_id': 9, 'party': 'ODRŽIVI RAZVOJ HRVATSKE - ORaH ', 'regions': [1,2,3,4,5,6,7,8,9,10]},
 ];
 
+var parties = [
+  {'id': 1, 'name': 'SOCIJALDEMOKRATSKA PARTIJA HRVATSKE - SDP'},
+  {'id': 2, 'name': 'HRVATSKA DEMOKRATSKA ZAJEDNICA - HDZ'},
+  {'id': 3, 'name': 'NAPRIJED HRVATSKA! - PROGRESIVNI SAVEZ IVE JOSIPOVIĆA'},
+  {'id': 4, 'name': 'HRVATSKA SELJAČKA STRANKA - HSS'},
+  {'id': 5, 'name': 'ODRŽIVI RAZVOJ HRVATSKE - ORaH'},
+  {'id': 6, 'name': 'ŽIVI ZID'}
+];
+
 $(document).ready(function () {
 
   init_controls();
@@ -99,6 +108,52 @@ function init_controls() {
 
   });
 
+  // TODO: For returning users, after login we should update the state of all questions based on what we retrieve from database.
+  parties.forEach( function(d) {
+      $('#question-parties').append(
+        '<option value="' + d.id + '">' + d.name + '</option>'
+        );
+    });
+
+  $("#question-parties").multiselect({
+    maxHeight: 200,
+    enableCaseInsensitiveFiltering: true,
+    buttonText: function(options, select) {
+      if (options.length === 0) {
+          return 'Odaberite stranke koje simpatizirate...';
+      }
+      else 
+      if (options.length===1) {
+          return  '1 stranka odabrana';
+      }
+      else if (options.length===2 || options.length===3) {
+          return  options.length + ' stranke odabrane';
+      }
+      else {
+          return options.length + ' stranki odabranih';
+      }
+    }
+  });
+
+  $("#button-vote-extra").click(function (e) {
+
+    // We can fetch selected parties in onChange callback of multiselect, but it's better to do it directly here.
+    selected_parties = [];
+    $('#question-parties option:selected').each(function(i,d){
+        // selected_parties.push({'id': $(this).val(), 'party': $(this).text()});
+        selected_parties.push($(this).val());
+    });
+
+    if (selected_parties.length!=0) {
+      $('#current-vote-extra-label').text('Stranke koje simpatizirate su zabilježene. Hvala!');
+      user_vote_extra({'parties': selected_parties});
+    }
+    else {
+      $('#current-vote-extra-label').html('<span style="color:red">Molim vas odaberite barem jednu stranku koju simpatizirate!</span>');
+    }
+
+  });
+
 }
 
 
@@ -139,6 +194,15 @@ function user_vote(d) {
   //   complete: function (jqXHR, textStatus) {},
   //   error: function (jqXHR, textStatus, errorThrown) {}
   // });
+
+}
+
+function user_vote_extra(d) {
+
+  console.log('Vaš glas za stranke koje simpatizirate je zabilježen:');
+  console.log(d.parties);
+
+  // TODO: Here goes ajax call!
 
 }
 

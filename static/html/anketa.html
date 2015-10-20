@@ -40,6 +40,7 @@
   var currently_selected_vote = -1;
   var currently_selected_meta = "";
   var current_voting_region = -1;
+  var selected_parties = [];
 </script>
 <script src="../js/functions.js"></script>
 <script src="../js/lodash.min.js"></script>
@@ -119,6 +120,21 @@
     <hr/>
 
     <div id="results" style="display:none;"> <!-- class="results-hidden"> -->
+
+      <div class="row">
+        <div class="col-md-12">
+
+          <h2>Stranke koje simpatizirate</h2>
+          <p>Odaberite sve stranke koje simpatizirate:</p>
+
+          <select id="question-parties" multiple="multiple"></select>
+          <div style="height:5px;clear:both;"></div>
+          <p id="current-vote-extra-label"></p>
+          <div style="height:5px;clear:both;"></div>
+          <button id="button-vote-extra" class="btn btn-lg btn-default">Glasaj</button>
+
+        </div>
+      </div>
 
       <div class="row">
         <div class="col-md-12">
