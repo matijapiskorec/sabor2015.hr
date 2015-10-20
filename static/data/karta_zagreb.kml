@@ -235,7 +235,6 @@
 		</Placemark>
 		<Placemark>
 			<name>I. izborna jedinica</name>
-			<styleUrl>#icon-503-A7B5D7-nodesc</styleUrl>
 			<ExtendedData>
 			</ExtendedData>
 			<Point>
@@ -244,7 +243,6 @@
 		</Placemark>
 		<Placemark>
 			<name>II. izborna jedinica</name>
-			<styleUrl>#icon-503-3F5BA9-nodesc</styleUrl>
 			<ExtendedData>
 			</ExtendedData>
 			<Point>
@@ -253,7 +251,6 @@
 		</Placemark>
 		<Placemark>
 			<name>VI. izborna jedinica</name>
-			<styleUrl>#icon-503-62AF44-nodesc</styleUrl>
 			<ExtendedData>
 			</ExtendedData>
 			<Point>
@@ -262,11 +259,19 @@
 		</Placemark>
 		<Placemark>
 			<name>VI. izborna jedinica</name>
-			<styleUrl>#icon-503-62AF44-nodesc</styleUrl>
 			<ExtendedData>
 			</ExtendedData>
 			<Point>
 				<coordinates>15.9912872,45.7751862,0.0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>VII. izborna jedinica</name>
+			<ExtendedData>
+			</ExtendedData>
+			<Point>
+				<coordinates>15.900065,45.71433,0.0</coordinates>
+
 			</Point>
 		</Placemark>
 		<Style id='icon-503-3F5BA9-nodesc-normal'>
