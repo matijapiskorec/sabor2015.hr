@@ -34,8 +34,6 @@ $(document).ready(function () {
 
   init_controls();
 
-  change_btn_vote_style(currently_selected_vote);
-
   if (current_vote!=-1 && current_meta!=0) {
     show_results();
   }
@@ -48,7 +46,6 @@ function init_controls() {
     nonSelectedText: 'Prije izbora stranke odaberite izbornu jedinicu!',
     onChange: function(option, checked, select) {
         currently_selected_vote = $(option).val();
-        change_btn_vote_style(currently_selected_vote);
         console.log('Odabrali ste stranku ' + $(option).text() + ' (redni broj ' + $(option).val() + ')');  
       }
   });
@@ -102,35 +99,8 @@ function init_controls() {
 
   });
 
-  $('#voting-region li').click(function (e) {
-    current_voting_region = this.attributes.region_id.value;
-    console.log('Odabrali ste izbornu jedinicu ' + current_voting_region);
-  });
-  $('#voting-region li a').click(function (e) {
-    event.preventDefault()
-    $('#chosen-field-text').text($(this).text());
-    $('#chosen-field-text').val($(this).text());
-  });
-
-  $("#button-submit-extra").click(function (e) {
-    if(current_voting_region==-1) {
-      console.log("Nite odabrali izbornu jedinicu");
-    }
-      console.log("Vaša izborna jedinica (" + current_voting_region + ") je zabilježena.");
-  });
 }
 
-function change_btn_vote_style(vote_value) {
-  
-  $('#question-vote button').removeClass('btn-info');
-  $('#question-vote button').addClass('btn-default');
-  
-  if (vote_value != -1) {
-    $('#question-vote button[party='+vote_value+']').removeClass('btn-default');
-    $('#question-vote button[party='+vote_value+']').addClass('btn-info');
-  }
-  
-}
 
 function show_results() {
   $('#results').show(1000);
