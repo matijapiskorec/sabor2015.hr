@@ -5,8 +5,5 @@ $(document).ready(function() {
     map.addLayer(googleLayer);
     //map.attributionControl.setPrefix('');
     var kmlLayer = new L.KML("../data/karta_zagreb.kml", {async: true});
-    kmlLayer.on("loaded", function(e) {
-      map.fitBounds(e.target.getBounds());
-      });
     map.addLayer(kmlLayer);
     });
