@@ -30,18 +30,12 @@
 <link rel="stylesheet" href="../css/charts.css" type="text/css" media="all" />
 <link rel="stylesheet" href="../css/bootstrap-slider.css" type="text/css" media="all" />
 
+<script src="../js/angular.min.js"></script>
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 
-<script type="text/javascript">
-  var current_vote = -1; // 2; //-1;
-  var current_meta = "";
-  var currently_selected_vote = -1;
-  var currently_selected_meta = "";
-  var current_voting_region = -1;
-  var selected_parties = [];
-</script>
 <script src="../js/functions.js"></script>
 <script src="../js/lodash.min.js"></script>
 <script src="../js/bootstrap-slider.js"></script>
@@ -67,6 +61,10 @@
 
   <hr />
 
+
+<!-- Everything inside this div has an access to global state of the application -->
+<div ng-app="sabor2015" ng-controller="sabor2015ctrl">
+
   <div class="container">
 
     <div class="row">
@@ -75,29 +73,13 @@
 
       <div class="col-md-6">
         <h3>Iz koje ste izborne jedinice?</h3>
-        <p>(provjerite <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank"> ovdje</a>)</p>
-        <!-- size="2" is a workaround so that first option is not automatically selected https://github.com/davidstutz/bootstrap-multiselect/issues/129 -->
-        <select id="question-region" size="2"> 
-          <option value="1">I. izborna jedinica</option>
-          <option value="2">II. izborna jedinica</option>
-          <option value="3">III. izborna jedinica</option>
-          <option value="4">IV. izborna jedinica</option>
-          <option value="5">V. izborna jedinica</option>
-          <option value="6">VI. izborna jedinica</option>
-          <option value="7">VII. izborna jedinica</option>
-          <option value="8">VIII. izborna jedinica</option>
-          <option value="9">IX. izborna jedinica</option>
-          <option value="10">X. izborna jedinica</option>
-          <option value="11">XI. izborna jedinica (Dijaspora)</option>
-          <option value="12">XII. izborna jedinica (Manjine)</option>
-        </select >
+        <p>(službene stranice <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank">DIP-a</a> i interaktivna <a href="mape.html" target="_blank">karta</a> )</p>
+        <regions></regions>
       </div>
 
       <div class="col-md-6">
         <h3>Za koga ćete glasati na izborima?</h3>
-        <!-- size="2" is a workaround so that first option is not automatically selected https://github.com/davidstutz/bootstrap-multiselect/issues/129 -->
-        <select id="question-vote" size="2"></select >
-        <div id="currently-selected-party-label"></div>
+        <question-list></question-list>
       </div>
 
     </div>
@@ -105,34 +87,22 @@
     <div class="row">
       <div class="col-md-12">
         <h3>Procijenite udio glasova koji će vaša stranka osvojiti u vašoj izbornoj jedinici.</h3>
-        <div class="slider-row">
-          <input id="question-meta" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
-        </div>
+        <question-meta></question-meta>
       </div>
     </div>
     
-
-    <div style="height:5px;clear:both;"></div>
-    <p id="current-vote-label"></p>
-    <div style="height:5px;clear:both;"></div>
-
-    <button id="button-vote" class="btn btn-lg btn-default">Glasaj</button>
+    <button-vote></button-vote>
 
     <hr/>
 
-    <div id="results" style="display:none;"> <!-- class="results-hidden"> -->
+    <results id="results" style="display:none;">
 
       <div class="row">
         <div class="col-md-12">
 
           <h2>Stranke koje simpatizirate</h2>
           <p>Odaberite sve stranke koje simpatizirate:</p>
-
-          <select id="question-parties" multiple="multiple"></select>
-          <div style="height:5px;clear:both;"></div>
-          <p id="current-vote-extra-label"></p>
-          <div style="height:5px;clear:both;"></div>
-          <button id="button-vote-extra" class="btn btn-lg btn-default">Glasaj</button>
+          <question-extra></question-extra>
 
         </div>
       </div>
@@ -141,15 +111,20 @@
         <div class="col-md-12">
 
           <h2>Rezultati za vaše prijatelje</h2>
-
-          <div id="statistics-of-friends"></div>
+          <statistics-of-friends></statistics-of-friends>
 
         </div>
       </div>
 
-    </div>
+    </results>
  
   </div>
+
+  <!-- Mockup buttons for loading user data -->
+  <load-user-data></load-user-data>
+
+</div> 
+
 
   <hr/>
   <div class="container">

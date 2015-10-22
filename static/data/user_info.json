@@ -1,0 +1,7 @@
+{
+  "returning_user": true,
+  "vote_region": 4,
+  "vote_list": 4,
+  "vote_meta": 10,
+  "vote_parties": [1,2,3]
+}
