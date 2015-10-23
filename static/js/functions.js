@@ -410,7 +410,6 @@ sabor2015.directive('buttonVote', function ($parse) {
 
 }); 
 
-
 sabor2015.directive('results', function ($parse) {
   return {
     restrict: 'E',
@@ -420,8 +419,14 @@ sabor2015.directive('results', function ($parse) {
      scope.$watch('friends_data', function (newData, oldData) {
 
         if (!newData) { return; }
+        var friends_data = newData;
 
         $(element).show(1000);
+
+        $('#total-votes-friends').text(
+          friends_data.map(function(d){return d.votes})
+                      .reduce(function(prev,curr){return curr + prev;})
+        );
 
       });
 
