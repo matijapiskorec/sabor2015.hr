@@ -80,8 +80,8 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
       });
     };
 
-    $scope.loadUserData("../data/new_user_info.json");
-    // $scope.loadUserData("../data/user_info.json");
+    // $scope.loadUserData("../data/new_user_info.json");
+    $scope.loadUserData("../data/user_info.json");
 
 
     // Data on political parties
@@ -229,7 +229,7 @@ sabor2015.directive('questionList', function ($parse) {
           var parties_in_region = scope.election_regions.filter(function(d){return _.includes(d.regions,Number(vote_region));});
           parties_in_region.forEach( function(d) {
               $('#question-list').append(
-                '<option value="' + d.party_id + '">' + d.short_name + '</option>'
+                '<option value="' + d.list_id + '">' + d.short_name + '</option>'
                 );
             });
           $("#question-list").multiselect('setOptions',{
@@ -241,7 +241,7 @@ sabor2015.directive('questionList', function ($parse) {
       var updateSelectedListLabel = function(vote_list) {
           $('#selected-list-label').empty();
           $('#selected-list-label').append('Odabrali ste sljedeću listu stranaka:')
-          var temp_parties = _.pluck(_.where(scope.election_regions,{'party_id':Number(vote_list)}), 'party');
+          var temp_parties = _.pluck(_.where(scope.election_regions,{'list_id':Number(vote_list)}), 'parties');
           var parties = temp_parties[0].split(',').map(function(d){return d.trim();});
 
           parties.forEach( function(d) {
@@ -365,7 +365,7 @@ sabor2015.directive('buttonVote', function ($parse) {
           var list = scope.user_info.vote_list ? scope.user_info.vote_list : scope.initial_user_info.vote_list;
           var meta = scope.user_info.vote_meta || scope.user_info.vote_meta==0 ? scope.user_info.vote_meta : scope.initial_user_info.vote_meta;
 
-          var list_name = _.pluck(_.where(scope.election_regions,{'party_id':Number(list)}), 'short_name');
+          var list_name = _.pluck(_.where(scope.election_regions,{'list_id':Number(list)}), 'short_name');
           $('#current-vote-label').text('Glasali ste za izbornu listu ' + list_name + ' (' + region + ' izborna jedinica) i predviđate da će dobiti ' + meta + '% glasova na izborima.');
         
           user_vote({'list': list, 
@@ -381,7 +381,7 @@ sabor2015.directive('buttonVote', function ($parse) {
 
       var user_vote = function (d) {
 
-        var list_name = _.pluck(_.where(scope.election_regions,{'party_id':Number(d.list)}), 'party');
+        var list_name = _.pluck(_.where(scope.election_regions,{'list_id':Number(d.list)}), 'parties');
         console.log('Glasali ste za stranku ' + list_name + ' (' + d.region + ' izborna jedinica) i predviđate da će dobiti ' + d.meta + ' glasova na izborima.');
 
         $('#results').show(1000);
@@ -436,11 +436,20 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
     replace: false,
     link: function (scope, element, attrs) {
 
-     scope.$watch('friends_data', function (newData, oldData) {
+     // scope.$watch('friends_data', function (newData, oldData) {
+     scope.$watchGroup(['election_regions','friends_data'], function (newData, oldData) {
 
-        if (!newData) { return; }
+        // if (!newData) { return; }
+        if (!newData[0] || !newData[1]) { return; }
 
-        var friends_data = newData;
+        // var friends_data = newData;
+        var friends_data = newData[1];
+        var election_regions = newData[0];
+
+        var data = friends_data.map(function(d){return {
+          "list": _.pluck(_.where(election_regions,{'list_id':Number(d.list)}),'short_name')[0],
+          "votes": d.votes
+        };});
 
         // This could go outside watch but then we have problems with duplication of text labels...
 
@@ -448,9 +457,10 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
           '<div id="statistics-of-friends"></div>'
         );
 
-        var margin = { top: 100, right: 20, bottom: 50, left: 150 },
-            width = 700 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+        var margin = { top: 50, right: 20, bottom: 20, left: 200 },
+            width = 500 - margin.left - margin.right;
+            // height = 400 - margin.top - margin.bottom;
+        var height = friends_data.length*30 - margin.top - margin.bottom;
         
         var x = d3.scale.linear().range([width, 0]);
         var y = d3.scale.ordinal().rangeRoundBands([0, height], .1);
@@ -461,7 +471,7 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
         
         var xAxis = d3.svg.axis()
           .scale(x)
-          .ticks(10, "%")
+          .ticks(10) // .ticks(10, "%")
           .orient("top");
 
         var yAxis = d3.svg.axis()
@@ -478,8 +488,12 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
 
         // ... up to here.
 
-        x.domain([1.1*d3.max(friends_data.map(function(d){return d.votes;})),0]);
-        y.domain(friends_data.map(function(d){return d.party;}));
+        x.domain([1.1*d3.max(data.map(function(d){return d.votes;})),0]);
+        // y.domain(data.map(function(d){return d.list;}));
+        y.domain(
+          data.sort(function(a,b){return b.votes-a.votes;})
+              .map(function(d){return d.list;})
+        );
         
         svg.append("g")
             .attr("class", "x axis")
@@ -488,20 +502,20 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
             .attr("x", width/2)
             .attr("dy", "-30px")
             .style("text-anchor", "center")
-            .text("postotak glasova");
+            .text("ukupan broj glasova");
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis);
 
-        d3.selectAll(".axis text").style("font-size","15px");
+        d3.selectAll(".axis text").style("font-size","12px");
 
         svg.selectAll(".bar")
-            .data(friends_data)
+            .data(data)
           .enter().append("rect")
             .attr("class", "bar")
             .attr("x", 0)
             .attr("width", function(d) { return x(d.votes); })
-            .attr("y", function(d) { return y(d.party); })
+            .attr("y", function(d) { return y(d.list); })
             .attr("height", y.rangeBand())
             .attr("fill", "steelblue")
             .transition()
@@ -511,22 +525,22 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
             });
         
         svg.selectAll(".bar-text")
-           .data(friends_data)
+           .data(data)
         .enter().append("text")
             .attr("x", function(d) { return x(d.votes); })
-            .attr("y", function(d) { return y(d.party); })
+            .attr("y", function(d) { return y(d.list); })
             .attr("dx",20)
             .attr("dy",15)
             .attr("text-anchor", "middle")
             .transition()
             .duration(1500)
-            .tween("text", 
-              function(d) {
-                  var i = d3.interpolate(this.textContent, Math.round(d.votes*100));
-                  return function(t) {
-                      this.textContent = Math.round(i(t)) + "%";
-                      };
-              })
+            // .tween("text", 
+            //   function(d) {
+            //       var i = d3.interpolate(this.textContent, d.votes); // Math.round(d.votes*100));
+            //       return function(t) {
+            //           this.textContent = Math.round(i(t)); // this.textContent = Math.round(i(t)) + "%";
+            //           };
+            //   })
             .attrTween("x", function (d) {
               return d3.interpolate(0, x(d.votes));
             });
@@ -561,7 +575,7 @@ sabor2015.directive('questionExtra', function ($parse) {
           });
 
           if (selected_parties.length!=0) {
-            var selected_parties_names = selected_parties.map(function(d){return _.pluck(_.where(scope.parties,{'id':Number(d)}),'name')[0];});
+            var selected_parties_names = selected_parties.map(function(d){return _.pluck(_.where(scope.parties,{'party_id':Number(d)}),'name')[0];});
             $('#vote-parties-label').text('Sljedeće stranke simpatizirate: ');
             selected_parties_names.forEach(function(d) {
                $('#vote-parties-label').append('<p style="margin-bottom:0px;">' + d + '</p>');
@@ -589,7 +603,7 @@ sabor2015.directive('questionExtra', function ($parse) {
         
         newData.forEach( function(d) {
             $('#question-parties').append(
-              '<option value="' + d.id + '">' + d.name + '</option>'
+              '<option value="' + d.party_id + '">' + d.name + '</option>'
               );
           });
 
