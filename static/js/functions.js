@@ -81,27 +81,8 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
     };
 
     $scope.loadUserData("../data/new_user_info.json");
+    // $scope.loadUserData("../data/user_info.json");
 
-    // // Data on user
-    // $http({url: "../data/new_user_info.json", method: 'GET'}) // Mockup for new user (has {"returning_user": false})
-    // // $http({url: "../data/user_info.json", method: 'GET'}) // Mockup for returning user (has {"returning_user": true})
-    //   .success(function (data) {
-    //     $scope.initial_user_info = data;
-    //     $scope.error = ''; // clear the error messages
-
-    //     if (data.returning_user) {
-    //       $('#results').show(1000);
-    //       $scope.getFriendsData("../data/friends_data.json");
-    //     }
-
-    //   })
-    //   .error(function (data, status) {
-    //     if (status === 404) {
-    //       $scope.error = 'Database not available!';
-    //     } else {
-    //       $scope.error = 'Error: ' + status;
-    //     }
-    //   });
 
     // Data on political parties
     $http({url: "../data/parties.json", method: 'GET'}) 
@@ -236,12 +217,11 @@ sabor2015.directive('questionList', function ($parse) {
 
       $("#question-list").multiselect({
         nonSelectedText: 'Prije izbora stranke odaberite izbornu jedinicu!',
+        maxHeight: 200,
         onChange: function(option, checked, select) {
             scope.setList($(option).val());
           }
       });
-
-      // var election_regions;
 
       // Build dropdown menu for parties based on chosen election region
       var buildMenuLists = function (vote_region) {
@@ -632,7 +612,6 @@ sabor2015.directive('questionExtra', function ($parse) {
             }
           }
         });
-
 
       });
 
