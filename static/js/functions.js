@@ -68,6 +68,7 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
           if (data.returning_user) {
             $('#results').show(1000);
             $scope.getFriendsData("../data/friends_data.json");
+            $scope.getVotesInTime("../data/votes_in_time.json");
           }
 
         })
@@ -80,8 +81,8 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
       });
     };
 
-    // $scope.loadUserData("../data/new_user_info.json");
-    $scope.loadUserData("../data/user_info.json");
+    $scope.loadUserData("../data/new_user_info.json");
+    // $scope.loadUserData("../data/user_info.json");
 
 
     // Data on political parties
@@ -125,6 +126,22 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
           $scope.error = 'Error: ' + status;
         }
       });
+
+    // Data on votes in time
+    $scope.getVotesInTime = function(url) {
+      $http({url: url, method: 'GET'})
+        .success(function (data) {
+          $scope.votes_in_time = data;
+          $scope.error = ''; // clear the error messages
+        })
+        .error(function (data, status) {
+          if (status === 404) {
+            $scope.error = 'Database not available!';
+          } else {
+            $scope.error = 'Error: ' + status;
+          }
+        });
+    };
 
 }]);
 
@@ -386,6 +403,7 @@ sabor2015.directive('buttonVote', function ($parse) {
 
         $('#results').show(1000);
         scope.getFriendsData("../data/friends_data.json");
+        scope.getVotesInTime("../data/votes_in_time.json");
 
         // // TODO: Here goes ajax call!
         // var data = 'vote=' + vote_value;
@@ -427,6 +445,9 @@ sabor2015.directive('results', function ($parse) {
           friends_data.map(function(d){return d.votes})
                       .reduce(function(prev,curr){return curr + prev;})
         );
+
+        // TODO: DATA ON TOTAL VOTES SHOULD BE LOADED IN CONTROLER AND APPROPRIATE WATCH PUT SOMEWHERE HERE! 
+        $('#total-votes').text("555");
 
       });
 
@@ -507,7 +528,7 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
             .attr("x", width/2)
             .attr("dy", "-30px")
             .style("text-anchor", "center")
-            .text("ukupan broj glasova");
+            .text("glasovi prijatelja");
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis);
@@ -648,3 +669,87 @@ sabor2015.directive('questionExtra', function ($parse) {
 
 }); 
 
+
+sabor2015.directive('votesInTime', function ($parse) {
+  return {
+    restrict: 'E',
+    replace: false,
+    link: function (scope, element, attrs) {
+
+     scope.$watch('votes_in_time', function (newData, oldData) {
+
+        if (!newData) { return; }
+
+        var data = newData;
+
+        data.forEach(function(d) {
+          d.time = d3.time.format("%d/%m/%Y %H").parse(d.time);
+        });
+
+        var margin = {top: 20, right: 20, bottom: 50, left: 50},
+            width = 600 - margin.left - margin.right,
+            height = 200 - margin.top - margin.bottom;
+
+        var x = d3.time.scale().range([0, width]);
+        var y = d3.scale.linear().range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .ticks(d3.time.day)
+            .tickFormat(d3.time.format("%e.%m."))
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left");
+
+        var line = d3.svg.line()
+            .x(function(d) { return x(d.time); })
+            .y(function(d) { return y(d.votes); });
+
+        $(element).html(
+          '<div id="votes-in-time"></div>'
+        );
+
+        $("#votes-in-time").empty();
+
+        var svg = d3.select("#votes-in-time").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        x.domain(d3.extent(data, function(d) { return d.time; }));
+        y.domain(d3.extent(data, function(d) { return d.votes; }));
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+          .append("text")
+            .attr("x", width/2) // .attr("dy", ".71em")
+            .attr("dy", "3em")
+            .style("text-anchor", "middle")
+            .text("Vrijeme");
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+          .append("text")
+            .attr("transform", "rotate(-90)") //.attr("y", 10)
+            .attr("x", height/2)
+            .attr("dx", "-6.5em")
+            .attr("dy", "-2.5em")
+            .style("text-anchor", "end")
+            .text("Ukupni broj glasova");
+
+        svg.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", line);
+
+      });
+
+    }};
+
+}); 
