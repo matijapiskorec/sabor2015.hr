@@ -130,4 +130,5 @@ progressChart.directive('progressChart', function ($parse) {
 
 }); 
 
-
+// // TODO: IT IS NOT POSSIBLE TO HAVE TO ANGULAR APPS IN THE SAME PAGE, SO YOU HAVE TO MANUALLY BOOTSTRAP THEM
+// angular.bootstrap($('#progress-chart'),['progressChart']);

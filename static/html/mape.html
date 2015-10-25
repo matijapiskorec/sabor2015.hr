@@ -60,10 +60,12 @@ href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css"> --
 
 <div class="container">   
   <div class="row text-center">
-    <!-- <img src="../images/logo-sabor2015.png" alt="sabor2015.hr" class="header-logo" /> -->
-    <div ng-app="progressChart" ng-controller="progressChartCTRL">
+    <img src="../images/logo-sabor2015.png" alt="sabor2015.hr" class="header-logo" />
+    <!-- <div ng-app="progressChart" ng-controller="progressChartCTRL">
+    <div id="progress-chart">
       <progress-chart></progress-chart>
     </div>
+    </div> -->
   </div>
 </div>
 
@@ -82,11 +84,13 @@ href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css"> --
 
   <hr/>
 
-  <div ng-app="findRegion" ng-controller="findRegionCTRL">
-    <div class="row">
-      <h2>Pretraga po lokaciji</h2>
-      <p>Unesite svoje mjesto, općinu, grad ili mjesni odbor (za Zagreb):</p>
-      <find-region></find-region>
+  <div class="row">
+    <h2>Pretraga po lokaciji</h2>
+    <p>Unesite svoje mjesto, općinu, grad ili mjesni odbor (za Zagreb):</p>
+    <div ng-app="findRegion" ng-controller="findRegionCTRL">
+      <!-- <div id="find-region"> -->
+        <find-region></find-region>
+      <!-- </div> -->
     </div>
   </div>
 
