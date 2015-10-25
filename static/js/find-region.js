@@ -45,7 +45,7 @@ findRegion.directive('findRegion', function ($parse) {
             caseSensitive: false,
             includeScore: false,
             shouldSort: true,
-            keys: ["location","county"]
+            keys: ["location","county"] // TODO: Maybe is better to search just by location?
           };
 
         var fuse = new Fuse(election_regions_locations, options);
