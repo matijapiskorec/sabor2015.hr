@@ -365,7 +365,7 @@ sabor2015.directive('questionMeta', function ($parse) {
       );
 
       $("#question-meta").on('slideStop', function(e) {
-        console.log(e.value);
+        // console.log(e.value);
         scope.setMeta(e.value);
       });
       
@@ -499,10 +499,8 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
      // scope.$watch('friends_data', function (newData, oldData) {
      scope.$watchGroup(['election_regions','friends_data'], function (newData, oldData) {
 
-        // if (!newData) { return; }
         if (!newData[0] || !newData[1]) { return; }
 
-        // var friends_data = newData;
         var friends_data = newData[1];
         var election_regions = newData[0];
 
@@ -510,6 +508,29 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
           "list": _.pluck(_.where(election_regions,{'list_id':Number(d.list)}),'short_name')[0],
           "votes": d.votes
         };});
+        data.sort(function(a,b){return b.votes-a.votes;});
+
+        // All lists that together make less than 10% of friend's votes are aggregated to one category
+        var reduceData = function(data) {
+          var totalNumberOfVotes = data.map(function(d){return d.votes})
+                .reduce(function(prev,curr){return curr + prev;});
+          var reducedData = [];
+          var currentSumVotes = 0;
+          var data_the_rest = {"list": "ostali", "votes": 0};
+          data.forEach(function(d){
+            if (currentSumVotes>= 0.9*totalNumberOfVotes) {
+              data_the_rest.votes += d.votes;
+            }
+            else {
+              reducedData.push(d);
+            }
+            currentSumVotes = currentSumVotes + d.votes;
+          });
+          reducedData.push(data_the_rest);
+          return reducedData;
+        };
+
+        // var data = reduceData(data);
 
         // This could go outside watch but then we have problems with duplication of text labels...
 
@@ -519,7 +540,6 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
 
         var margin = { top: 50, right: 20, bottom: 20, left: 200 },
             width = 500 - margin.left - margin.right;
-            // height = 400 - margin.top - margin.bottom;
         var height = friends_data.length*30 - margin.top - margin.bottom;
         
         var x = d3.scale.linear().range([width, 0]);
@@ -527,8 +547,9 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
 
         // TODO: Find better way to assign colors to parties!
         var color = d3.scale.ordinal()
-          .range([d3.rgb(165,0,38), d3.rgb(244,109,67), d3.rgb(254,224,144), d3.rgb(116,173,209), d3.rgb(49,54,149)]);
-        
+          .range(["#3f007d","#54278f","#6a51a3","#807dba","#9e9ac8","#bcbddc","#dadaeb","#efedf5","#fcfbfd"]);
+          // .range([d3.rgb(165,0,38), d3.rgb(244,109,67), d3.rgb(254,224,144), d3.rgb(116,173,209), d3.rgb(49,54,149)]);
+
         var xAxis = d3.svg.axis()
           .scale(x)
           .ticks(10) // .ticks(10, "%")
@@ -549,11 +570,7 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
         // ... up to here.
 
         x.domain([1.1*d3.max(data.map(function(d){return d.votes;})),0]);
-        // y.domain(data.map(function(d){return d.list;}));
-        y.domain(
-          data.sort(function(a,b){return b.votes-a.votes;})
-              .map(function(d){return d.list;})
-        );
+        y.domain(data.map(function(d){return d.list;}));
         
         svg.append("g")
             .attr("class", "x axis")
@@ -577,7 +594,8 @@ sabor2015.directive('statisticsOfFriends', function ($parse) {
             .attr("width", function(d) { return x(d.votes); })
             .attr("y", function(d) { return y(d.list); })
             .attr("height", y.rangeBand())
-            .attr("fill", "steelblue")
+            .attr("fill", "steelblue") //.attr("fill", function(d){return color(d.list);})
+            //.attr("stroke","black")
             .transition()
             .duration(1500)
             .attrTween("width", function (d) {
@@ -962,3 +980,201 @@ sabor2015.directive('findRegion', function ($parse) {
     }};
 
 }); 
+
+
+
+sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
+  return {
+    restrict: 'E',
+    replace: false,
+    link: function (scope, element, attrs) {
+
+     scope.$watchGroup(['election_regions','friends_data'], function (newData, oldData) {
+
+        if (!newData[0] || !newData[1]) { return; }
+
+        var friends_data = newData[1];
+        var election_regions = newData[0];
+
+        var data = friends_data.map(function(d){return {
+          "list": _.pluck(_.where(election_regions,{'list_id':Number(d.list)}),'short_name')[0],
+          "votes": d.votes
+        };});
+        data.sort(function(a,b){return b.votes-a.votes;});
+
+        // This could go outside watch but then we have problems with duplication of text labels...
+
+        $(element).html(
+          '<div id="statistics-of-friends-circle"></div>'
+        );
+
+        var margin = { top: 20, right: 20, bottom: 20, left: 20 },
+            width = 700 - margin.left - margin.right;
+        var height = 400 - margin.top - margin.bottom;
+        var radius = Math.min(width, height) / 2;
+        
+        $("#statistics-of-friends-circle").empty();
+        
+        var svg = d3.select("#statistics-of-friends").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g");
+            // .attr("position", "relative")
+            // .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("g")
+          .attr("class", "slices");
+        svg.append("g")
+          .attr("class", "labels");
+        svg.append("g")
+          .attr("class", "lines");
+
+        // ... up to here.
+
+        var pie = d3.layout.pie()
+          .sort(null)
+          .value(function(d) {
+            return d.votes;
+          });
+
+        var arc = d3.svg.arc()
+          .outerRadius(radius * 0.7) // 0.8)
+          .innerRadius(radius * 0.6); // 0.4);
+
+        var outerArc = d3.svg.arc()
+          .innerRadius(radius * 0.7)
+          .outerRadius(radius * 0.7); // 0.9);
+
+        svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var key = function(d){ return d.data.list; };
+
+        // All lists that together make less than 10% of friend's votes are aggregated to one category
+        var reduceData = function(data) {
+          var totalNumberOfVotes = data.map(function(d){return d.votes})
+                .reduce(function(prev,curr){return curr + prev;});
+          var reducedData = [];
+          var currentSumVotes = 0;
+          var data_the_rest = {"list": "ostali", "votes": 0};
+          data.forEach(function(d){
+            if (currentSumVotes>= 0.9*totalNumberOfVotes) {
+              data_the_rest.votes += d.votes;
+            }
+            else {
+              reducedData.push(d);
+            }
+            currentSumVotes = currentSumVotes + d.votes;
+          });
+          reducedData.push(data_the_rest);
+          return reducedData;
+        };
+
+        var data = reduceData(data);
+
+
+        var color = d3.scale.ordinal()
+          .domain( data.map(function(d){return d.list;}) )
+          .range(["#3f007d","#54278f","#6a51a3","#807dba","#9e9ac8","#bcbddc","#dadaeb","#efedf5","#fcfbfd"]);
+        
+        change(data);
+
+        // window.setTimeout(change(data.slice(0,1)), 10000);
+
+        function change(data) {
+
+          /* ------- PIE SLICES -------*/
+          var slice = svg.select(".slices").selectAll("path.slice")
+            .data(pie(data), key);
+
+          slice.enter()
+            .insert("path")
+            .style("fill", function(d) { return color(d.data.list); })
+            .attr("class", "slice");
+
+          slice   
+            .transition().duration(10000)
+            .attrTween("d", function(d) {
+              this._current = this._current || d;
+              var interpolate = d3.interpolate(this._current, d);
+              this._current = interpolate(0);
+              return function(t) {
+                return arc(interpolate(t));
+              };
+            })
+
+          slice.exit()
+            .remove();
+
+          /* ------- TEXT LABELS -------*/
+
+          var text = svg.select(".labels").selectAll("text")
+            .data(pie(data), key);
+
+          text.enter()
+            .append("text")
+            .attr("dy", ".35em")
+            .text(function(d) {
+              return d.data.list;
+            });
+          
+          function midAngle(d){
+            return d.startAngle + (d.endAngle - d.startAngle)/2;
+          }
+
+          text.transition().duration(10000)
+            .attrTween("transform", function(d) {
+              this._current = this._current || d;
+              var interpolate = d3.interpolate(this._current, d);
+              this._current = interpolate(0);
+              return function(t) {
+                var d2 = interpolate(t);
+                var pos = outerArc.centroid(d2);
+                pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+                return "translate("+ pos +")";
+              };
+            })
+            .styleTween("text-anchor", function(d){
+              this._current = this._current || d;
+              var interpolate = d3.interpolate(this._current, d);
+              this._current = interpolate(0);
+              return function(t) {
+                var d2 = interpolate(t);
+                return midAngle(d2) < Math.PI ? "start":"end";
+              };
+            });
+
+          text.exit()
+            .remove();
+
+          /* ------- SLICE TO TEXT POLYLINES -------*/
+
+          var polyline = svg.select(".lines").selectAll("polyline")
+            .data(pie(data), key);
+          
+          polyline.enter()
+            .append("polyline");
+
+          polyline.transition().duration(10000)
+            .attrTween("points", function(d){
+              this._current = this._current || d;
+              var interpolate = d3.interpolate(this._current, d);
+              this._current = interpolate(0);
+              return function(t) {
+                var d2 = interpolate(t);
+                var pos = outerArc.centroid(d2);
+                pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                return [arc.centroid(d2), outerArc.centroid(d2), pos];
+              };      
+            });
+          
+          polyline.exit()
+            .remove();
+
+        };
+
+      });
+
+    }};
+
+}); 
+
