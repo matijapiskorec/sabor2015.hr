@@ -353,15 +353,16 @@ sabor2015.directive('questionMeta', function ($parse) {
 
       $(element).html(
         '<div class="slider-row">' +
-          '<input id="question-meta" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>' +
+        '<input id="question-meta" type="text" data-slider-min="0"' + 
+        ' data-slider-max="100" data-slider-step="1" data-slider-value="0" />' +
         '</div>'
-      );
+        );
 
       $("#question-meta").slider({
-          ticks: [0, 10, 20, 30, 40, 50, 60, 70, 80,90, 100],
-          ticks_labels: ['0%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
-          ticks_snap_bounds: 1
-        }
+        ticks: [0, 25, 50, 75, 100],
+        ticks_labels: ['0%', '25%', '50%', '75%', '100%'],
+        ticks_snap_bounds: 1
+      }
       );
 
       $("#question-meta").on('slideStop', function(e) {
