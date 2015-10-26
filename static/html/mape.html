@@ -44,11 +44,15 @@ href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css"> --
 <script src="../js/fuse.min.js"></script>
 <script src="../js/find-region.js"></script>
 
-<script src="../js/progress-chart.js"></script>
+<!-- <script src="../js/progress-chart.js"></script> -->
+<script src="../js/functions.js"></script>
 
 </head>
 
 <body>
+
+<!-- Everything inside this div has an access to global state of the application -->
+<div ng-app="sabor2015" ng-controller="sabor2015ctrl">
 
 <div class="navbar navbar-default navbar-static-top" role="navigation">
   <div class="container">
@@ -60,12 +64,8 @@ href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css"> --
 
 <div class="container">   
   <div class="row text-center">
-    <img src="../images/logo-sabor2015.png" alt="sabor2015.hr" class="header-logo" />
-    <!-- <div ng-app="progressChart" ng-controller="progressChartCTRL">
-    <div id="progress-chart">
-      <progress-chart></progress-chart>
-    </div>
-    </div> -->
+    <!-- <img src="../images/logo-sabor2015.png" alt="sabor2015.hr" class="header-logo" /> -->
+    <progress-chart></progress-chart>
   </div>
 </div>
 
@@ -74,23 +74,19 @@ href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css"> --
 <div class="container">
 
   <div class="row">
-    <div class="col-md-6">
-      <div id="map" style="height: 500px; width: 500px" class="row text-center"></div>
-    </div>
+    <h2>Pretraga po lokaciji</h2>
+    <p>Unesite svoje mjesto, općinu, grad ili mjesni odbor (za Zagreb):</p>
+    <find-region url="../data/election_regions_locations.json"></find-region>
+  </div>
+  
+  <hr/>
+  
+  <div class="row">
     <div class="col-md-6">
       <img src="../images/izborne-labele.png" style="height: 500px; width: 500px"/>
     </div>
-  </div>
-
-  <hr/>
-
-  <div class="row">
-    <h2>Pretraga po lokaciji</h2>
-    <p>Unesite svoje mjesto, općinu, grad ili mjesni odbor (za Zagreb):</p>
-    <div ng-app="findRegion" ng-controller="findRegionCTRL">
-      <!-- <div id="find-region"> -->
-        <find-region></find-region>
-      <!-- </div> -->
+    <div class="col-md-6">
+      <div id="map" style="height: 500px; width: 500px" class="row text-center"></div>
     </div>
   </div>
 
@@ -98,6 +94,9 @@ href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css"> --
 
 
 <hr/>
+
+</div> <!-- <div ng-app="sabor2015" ng-controller="sabor2015ctrl"> -->
+
 
 <div style="height:100px;clear:both;"></div>
 

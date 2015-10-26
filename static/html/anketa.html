@@ -47,6 +47,10 @@
 
 </head>
 <body>
+
+<!-- Everything inside this div has an access to global state of the application -->
+<div ng-app="sabor2015" ng-controller="sabor2015ctrl">
+  
   <div class="navbar navbar-default navbar-static-top" role="navigation">
     <div class="container">
       <div class="navbar-header">
@@ -57,18 +61,12 @@
 
   <div class="container">   
     <div class="row text-center">
-      <img src="../images/logo-sabor2015.png" alt="sabor2015.hr" class="header-logo" />
-<!--       <div ng-app="progressChart" ng-controller="progressChartCTRL">
+      <!-- <img src="../images/logo-sabor2015.png" alt="sabor2015.hr" class="header-logo" /> -->
         <progress-chart></progress-chart>
-      </div> -->
     </div>
   </div>
 
   <hr />
-
-
-<!-- Everything inside this div has an access to global state of the application -->
-<div ng-app="sabor2015" ng-controller="sabor2015ctrl">
 
   <div class="container">
 
@@ -79,12 +77,12 @@
       <div class="col-md-6">
         <h3>Iz koje ste izborne jedinice?</h3>
         <p>(službene stranice <a href="https://biraci.gov.hr/RegistarBiraca/" target="_blank">DIP-a</a> i interaktivna <a href="mape.html" target="_blank">karta</a> )</p>
-        <regions></regions>
+        <regions url="../data/regions.json"></regions>
       </div>
 
       <div class="col-md-6">
         <h3>Za koga ćete glasati na izborima?</h3>
-        <question-list></question-list>
+        <question-list url="../data/election_regions.json"></question-list>
       </div>
 
     </div>
@@ -107,7 +105,7 @@
 
           <h2>Stranke koje simpatizirate</h2>
           <p>Odaberite sve stranke koje simpatizirate:</p>
-          <question-extra></question-extra>
+          <question-extra url="../data/parties.json"></question-extra>
 
         </div>
       </div>

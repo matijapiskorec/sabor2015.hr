@@ -81,12 +81,15 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
       });
     };
 
+    // TODO: This is loaded even on the welcome page. Maybe this is not neccessary?
     $scope.loadUserData("../data/new_user_info.json");
     // $scope.loadUserData("../data/user_info.json");
 
 
     // Data on political parties
-    $http({url: "../data/parties.json", method: 'GET'}) 
+    // $http({url: "../data/parties.json", method: 'GET'}) 
+    $scope.loadPartiesData = function(url) {
+      $http({url: url, method: 'GET'})
       .success(function (data) {
         $scope.parties = data;
         $scope.error = ''; // clear the error messages
@@ -98,9 +101,12 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
           $scope.error = 'Error: ' + status;
         }
       });
+    };
 
     // Data on election regions and lists in them
-    $http({url: "../data/election_regions.json", method: 'GET'}) 
+    // $http({url: "../data/election_regions.json", method: 'GET'}) 
+    $scope.loadElectionRegionsData = function(url) {
+      $http({url: url, method: 'GET'})
       .success(function (data) {
         $scope.election_regions = data;
         $scope.error = ''; // clear the error messages
@@ -112,9 +118,12 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
           $scope.error = 'Error: ' + status;
         }
       });
+    };
 
     // Data on election regions
-    $http({url: "../data/regions.json", method: 'GET'}) 
+    // $http({url: "../data/regions.json", method: 'GET'}) 
+    $scope.loadRegionsData = function(url) {
+      $http({url: url, method: 'GET'})
       .success(function (data) {
         $scope.regions = data;
         $scope.error = ''; // clear the error messages
@@ -126,6 +135,7 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
           $scope.error = 'Error: ' + status;
         }
       });
+    };
 
     // Data on votes in time
     $scope.getVotesInTime = function(url) {
@@ -141,6 +151,26 @@ sabor2015.controller('sabor2015ctrl', ['$scope', '$http', function ($scope, $htt
             $scope.error = 'Error: ' + status;
           }
         });
+    };
+
+    // TODO: THIS SHOULD BE LOADED FROM SERVER WITH AJAX CALL!
+    $scope.totalNumberOfVotes = Math.floor(Math.random()*10000);
+
+    // Data on election regions
+    // $http({url: "../data/election_regions_locations.json", method: 'GET'}) 
+    $scope.loadElectionRegionsLocations = function(url) {
+      $http({url: url, method: 'GET'})
+      .success(function (data) {
+        $scope.election_regions_locations = data;
+        $scope.error = ''; // clear the error messages
+      })
+      .error(function (data, status) {
+        if (status === 404) {
+          $scope.error = 'Database not available!';
+        } else {
+          $scope.error = 'Error: ' + status;
+        }
+      });
     };
 
 }]);
@@ -177,6 +207,8 @@ sabor2015.directive('regions', function ($parse) {
       $(element).html(
         '<select id="question-region" size="2"></select>'
       );
+
+      scope.loadRegionsData(attrs.url);
 
       scope.$watch('regions', function (newData, oldData) {
 
@@ -267,6 +299,8 @@ sabor2015.directive('questionList', function ($parse) {
                 );
             });
       }
+
+      scope.loadElectionRegionsData(attrs.url);
 
       scope.$watchGroup(['election_regions','initial_user_info.vote_region','initial_user_info.vote_list'], function (newData, oldData) {
 
@@ -623,6 +657,8 @@ sabor2015.directive('questionExtra', function ($parse) {
 
       }
 
+      scope.loadPartiesData(attrs.url);
+
       scope.$watch('parties', function (newData, oldData) {
 
         if (!newData) { return; }
@@ -749,6 +785,179 @@ sabor2015.directive('votesInTime', function ($parse) {
             .attr("d", line);
 
       });
+
+    }};
+
+}); 
+
+
+sabor2015.directive('progressChart', function ($parse) {
+  return {
+    restrict: 'E',
+    replace: false,
+    link: function (scope, element, attrs) {
+
+      $(element).html(
+        '<div id="progress-chart"></div>'
+      );
+
+      scope.$watch('totalNumberOfVotes', function (newData, oldData) {
+
+        if (!newData) { return; }
+        var totalNumberOfVotes = newData;
+        
+        $('#progress-chart').empty();
+
+        var width = 300,
+          height = 300,
+          radius = Math.min(width, height) / 2;
+
+        var total_votes = 10000;
+
+        var color_rim = d3.rgb(44,123,182); // bluish
+        var color_center = d3.rgb(215,25,28); // redish
+        var color_empty = d3.rgb(200, 200, 200);
+
+        var svg = d3.select("#progress-chart").append("svg")
+          .attr("width", width)
+          .attr("height", height)
+          .append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var arc_zero = d3.svg.arc()
+          .innerRadius(radius - 0.20 * radius) // 0.45 * radius)
+          .outerRadius(radius - 0.05 * radius) // 0.05 * radius)
+          .startAngle(0);
+
+        var path_zero = svg.append("path")
+          .datum({
+            endAngle: 2 * Math.PI
+          })
+          .attr("fill", color_empty)
+          .attr("d", arc_zero);
+
+          var progress_ratio = totalNumberOfVotes / total_votes;
+
+          var arc = d3.svg.arc()
+            .innerRadius(radius - 0.20 * radius) // 0.45 * radius)
+            .outerRadius(radius - 0.05 * radius); // 0.05 * radius);
+
+          var za_arc = svg.append("path")
+            .datum({
+              startAngle: 0,
+              endAngle: 0
+            })
+            .attr("fill", color_rim)
+            .attr("d", arc)
+            .transition()
+            .duration(2000)
+            .attrTween("d", function (d) {
+              var interpolate = d3.interpolate(d.endAngle, progress_ratio*2*Math.PI); //ratio_protiv * 2 * Math.PI);
+              return function (t) {
+                d.endAngle = interpolate(t);
+                $('.votes-all').text(Math.floor(t*totalNumberOfVotes));
+                return arc(d);
+              }
+            });
+
+          // // TODO: Animated text that updates the total number of votes, but I don't know where to put it:-(
+          // svg.append("text")
+          //   .attr("dy", "0.5em") //.attr("dy", ".75em")
+          //   .attr("y", 0) //.attr("y", -0.15 * radius)
+          //   .attr("x", 0)
+          //   .attr("text-anchor", "middle")
+          //   .attr("font-family", "sans-serif")
+          //   .attr("font-size", "22px")
+          //   .attr("fill", color_rim)
+          //   .text("0")
+          //   .transition()
+          //   .duration(2000)
+          //   .tween("text",
+          //     function () {
+          //       var i = d3.interpolate(this.textContent, totalNumberOfVotes);
+          //       return function (t) {
+          //         this.textContent = Math.round(i(t)) + " glasova";
+          //       };
+          //     });
+
+          svg.append("circle")
+            .attr("cy", 0)
+            .attr("cx", 0)
+            .attr("r", radius - 0.20 * radius - 0.02 * radius)
+            .attr("fill", color_center);
+
+          svg.append("text")
+            .attr("y", -0.05 * radius)
+            .attr("x", 0)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "65px")
+            .attr("fill", "white")
+            .text("sabor");
+
+          svg.append("text")
+            .attr("y", 0.35 * radius)
+            .attr("x", 0)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "50px")
+            .attr("fill", "white")
+            .text("2015.hr");
+
+      });
+
+
+    }};
+
+}); 
+
+
+sabor2015.directive('findRegion', function ($parse) {
+  return {
+    restrict: 'E',
+    replace: false,
+    link: function (scope, element, attrs) {
+
+      $(element).html(
+        '<input id="find-region-input" type="text">' + 
+        '<div id="find-region-list" style="max-height:200px;overflow-y:scroll;width:500px;"></div>'
+      );
+
+      scope.loadElectionRegionsLocations(attrs.url);
+
+      scope.$watch('election_regions_locations', function (newData, oldData) {
+
+        if (!newData) { return; }
+        
+        var election_regions_locations = newData;
+
+        // TODO: Some other options which are probably not needed at this time...
+        // threshold: 0.6, location: 0, distance: 100, maxPatternLength: 32
+
+        var options = {
+            caseSensitive: false,
+            includeScore: false,
+            shouldSort: true,
+            keys: ["location","county"] // TODO: Maybe is better to search just by location?
+          };
+
+        var fuse = new Fuse(election_regions_locations, options);
+
+        $('#find-region-input').on('keyup', function(e) {
+            $('#find-region-list').empty();
+            var result = fuse.search($(this).val());
+
+            result.forEach( function(d) {
+                $('#find-region-list').append(
+                  '<p style="margin-bottom:0px;">' + d.location + ', ' + d.county + ', ' + d.election_region + '. izborna jedinica</p>'
+                  );
+              });
+
+        });
+
+
+      });
+
 
     }};
 
