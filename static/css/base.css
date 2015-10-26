@@ -46,3 +46,10 @@
 .results-visible {
   display: inline-block;
 }*/
+
+.map-label {
+  position: absolute;
+  width: 10px;
+  font-size: 30px;
+  font-family: "Times New Roman";
+}
