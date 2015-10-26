@@ -1010,7 +1010,7 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
         );
 
         var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-            width = 700 - margin.left - margin.right;
+            width = 800 - margin.left - margin.right;
         var height = 400 - margin.top - margin.bottom;
         var radius = Math.min(width, height) / 2;
         
@@ -1020,8 +1020,6 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g");
-            // .attr("position", "relative")
-            // .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         svg.append("g")
           .attr("class", "slices");
@@ -1072,14 +1070,14 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
 
         var data = reduceData(data);
 
-
+        // TODO: Adding default color ("#fcfbfd") multiple times at the end ensures that color never repeats.
+        //       This could be done smarter. 
         var color = d3.scale.ordinal()
           .domain( data.map(function(d){return d.list;}) )
-          .range(["#3f007d","#54278f","#6a51a3","#807dba","#9e9ac8","#bcbddc","#dadaeb","#efedf5","#fcfbfd"]);
-        
-        change(data);
+          .range(["#3f007d","#54278f","#6a51a3","#807dba","#9e9ac8","#bcbddc","#dadaeb","#efedf5","#fcfbfd","#fcfbfd","#fcfbfd","#fcfbfd","#fcfbfd","#fcfbfd"]);
 
-        // window.setTimeout(change(data.slice(0,1)), 10000);
+        change(data);
+        
 
         function change(data) {
 
@@ -1093,7 +1091,7 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
             .attr("class", "slice");
 
           slice   
-            .transition().duration(10000)
+            .transition().duration(1000)
             .attrTween("d", function(d) {
               this._current = this._current || d;
               var interpolate = d3.interpolate(this._current, d);
@@ -1115,14 +1113,14 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
             .append("text")
             .attr("dy", ".35em")
             .text(function(d) {
-              return d.data.list;
+              return d.data.list + ' (' + d.data.votes + ')';
             });
-          
+
           function midAngle(d){
             return d.startAngle + (d.endAngle - d.startAngle)/2;
           }
 
-          text.transition().duration(10000)
+          text.transition().duration(1000)
             .attrTween("transform", function(d) {
               this._current = this._current || d;
               var interpolate = d3.interpolate(this._current, d);
@@ -1130,7 +1128,7 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
               return function(t) {
                 var d2 = interpolate(t);
                 var pos = outerArc.centroid(d2);
-                pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+                pos[0] = 0.85 * radius * (midAngle(d2) < Math.PI ? 1 : -1); // 0.85 finetunes horizontal distance
                 return "translate("+ pos +")";
               };
             })
@@ -1155,7 +1153,7 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
           polyline.enter()
             .append("polyline");
 
-          polyline.transition().duration(10000)
+          polyline.transition().duration(1000)
             .attrTween("points", function(d){
               this._current = this._current || d;
               var interpolate = d3.interpolate(this._current, d);
@@ -1163,7 +1161,7 @@ sabor2015.directive('statisticsOfFriendsCircle', function ($parse) {
               return function(t) {
                 var d2 = interpolate(t);
                 var pos = outerArc.centroid(d2);
-                pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                pos[0] = radius * 0.80 * (midAngle(d2) < Math.PI ? 1 : -1); // 0.80 finetunes horizontal distance
                 return [arc.centroid(d2), outerArc.centroid(d2), pos];
               };      
             });
